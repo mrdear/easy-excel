@@ -1,6 +1,6 @@
 ## 快速导出报表工具
 
-由于公司内部之前对于excel封装操作并不是很方便，而且对于特殊的需求不是很容易满足，因此这里造个轮子，便于导入和导出对应的excel报表。
+造个轮子，便于导入和导出对应的excel报表。
 
 
 ## maven
@@ -14,13 +14,14 @@
 
 ```
 
-
 ## 核心类
 
 - **EasyExcel** : 入口类，所有对外的操作都是由该类发起，主要有export与read两个操作。
 - **ExcelWriter**：导出类，其方法分为非终端操作与终端操作，终端操作会输出并关闭该流，非终端操作则可以继续接着读取，应对一张excel中含有多个sheet的情况。
 - **ExcelReader**：读取类，与上述`ExcelWriter`一样的操作。
 - **ExcelField**：修饰实体类注解，Excel中最麻烦的是header，因此提倡每一张报表单独对应一个POJO类，使用注解标识相应字段。
+- **ExcelWriteContext**：针对导出过程中一张sheet的配置，使用Builder模式构建。
+- **ExcelReadContext**：针对读取过程中一张sheet的配置，使用Builder模式构建。
 
 ## Example
 
@@ -42,10 +43,11 @@ public class UserWithAnnotation {
 }
 ```
 
-### example1
+### 单张表
 ![](http://oobu4m7ko.bkt.clouddn.com/1530326628.png?imageMogr2/thumbnail/!100p)
 
 **export**
+
 ```java
  @Test
   public void testSimpleWithAnnotationExport() {
@@ -59,6 +61,7 @@ public class UserWithAnnotation {
   }
 ```
 **import**
+
 ```java
  @Test
   public void testRead2() {
@@ -78,10 +81,13 @@ public class UserWithAnnotation {
   }
 ```
 
-### example2
+### 多张表+自定义header
 sheet1最顶部有自定义的title
+
 ![](http://oobu4m7ko.bkt.clouddn.com/1530326869.png?imageMogr2/thumbnail/!100p)
+
 sheet2为普通表格
+
 ![](http://oobu4m7ko.bkt.clouddn.com/1530326912.png?imageMogr2/thumbnail/!100p)
 
 **export**
@@ -141,4 +147,11 @@ sheet2为普通表格
     Assert.assertEquals(sheet2Result.get(1).getUsername(), "张三1");
 
   }
+```
+
+### 写入HttpServletResponse
+提供`ResponseHelper`从`HttpServletResponse`获取对应的输出流，然后放入
+```java
+OutputStream outputStream = ResponseHelper.wrapper(response, "order.xlsx");
+EasyExcel.export(outputStream)....
 ```
