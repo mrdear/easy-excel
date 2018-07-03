@@ -6,7 +6,8 @@
 
     <groupId>io.github.mrdear</groupId>
     <artifactId>excel</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
+    <name>easy-excel</name>
     <url>https://github.com/mrdear/easy-excel</url>
     <description>一款方便操作excel的封装</description>
 
@@ -86,6 +87,19 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>release</id>
@@ -119,19 +133,11 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>8</source>
-                            <target>8</target>
-                        </configuration>
-                    </plugin>
                     <!--  Javadoc  -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.4</version>
+                        <version>2.10.2</version>
                         <configuration>
                             <charset>UTF-8</charset>
                             <docencoding>UTF-8</docencoding>
@@ -162,6 +168,18 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <!--stage release-->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>oss</serverId>
+                            <nexusUrl>https://oss.sonatype.org</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -197,14 +215,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <source>8</source>
-                            <target>8</target>
-                        </configuration>
                     </plugin>
                     <!--skip test-->
                     <plugin>

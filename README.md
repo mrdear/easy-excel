@@ -3,6 +3,18 @@
 由于公司内部之前对于excel封装操作并不是很方便，而且对于特殊的需求不是很容易满足，因此这里造个轮子，便于导入和导出对应的excel报表。
 
 
+## maven
+```xml
+
+<dependency>
+  <groupId>io.github.mrdear</groupId>
+  <artifactId>excel</artifactId>
+  <version>0.0.2</version>
+</dependency>
+
+```
+
+
 ## 核心类
 
 - **EasyExcel** : 入口类，所有对外的操作都是由该类发起，主要有export与read两个操作。

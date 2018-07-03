@@ -19,7 +19,7 @@ public class ExcelReadHeader {
    */
   private Function convert;
 
-  ExcelReadHeader(Field field, Function convert) {
+  private ExcelReadHeader(Field field, Function convert) {
     this.field = field;
     this.convert = convert;
   }

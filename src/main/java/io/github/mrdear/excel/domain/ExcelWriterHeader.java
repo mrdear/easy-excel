@@ -17,7 +17,7 @@ public class ExcelWriterHeader {
    */
   private Function convert;
 
-  ExcelWriterHeader(String name, Function convert) {
+  private ExcelWriterHeader(String name, Function convert) {
     this.name = name;
     this.convert = convert;
   }

@@ -1,11 +1,11 @@
 package io.github.mrdear.excel.domain;
 
+import io.github.mrdear.excel.internal.restrain.WorkbookCreate;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import io.github.mrdear.excel.internal.restrain.WorkbookCreate;
 
 /**
  * @author Quding Ding
@@ -27,8 +27,11 @@ public enum ExcelType implements WorkbookCreate {
   XLSX {
     @Override
     public Workbook workbook(int mayRowCount) {
-      XSSFWorkbook workbook = new XSSFWorkbook();
-      return new SXSSFWorkbook(workbook, 100);
+      Workbook workbook = new XSSFWorkbook();
+      if (mayRowCount > 3000) {
+        workbook = new SXSSFWorkbook((XSSFWorkbook) workbook, 100);
+      }
+      return workbook;
     }
   };
 

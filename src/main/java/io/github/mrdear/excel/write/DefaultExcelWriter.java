@@ -1,8 +1,10 @@
 package io.github.mrdear.excel.write;
 
+import io.github.mrdear.excel.ExcelException;
 import io.github.mrdear.excel.domain.ExcelType;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
+import io.github.mrdear.excel.internal.util.Assert;
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,9 +14,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.github.mrdear.excel.ExcelException;
-import io.github.mrdear.excel.internal.util.Assert;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +31,9 @@ public class DefaultExcelWriter implements ExcelWriter {
   /**
    * 工作簿
    */
-  private final Workbook workbook;
+  private Workbook workbook;
+
+  private final ExcelType excelType;
   /**
    * 输出目标
    */
@@ -41,9 +42,7 @@ public class DefaultExcelWriter implements ExcelWriter {
   public DefaultExcelWriter(ExcelType excelType, OutputStream outputStream) {
     Assert.notNull(excelType, "excelType can't be null");
     Assert.notNull(outputStream, "outputStream can't be null");
-
-    // 创建excel
-    this.workbook = excelType.workbook(1);
+    this.excelType = excelType;
     this.outputStream = outputStream;
   }
 
@@ -54,6 +53,8 @@ public class DefaultExcelWriter implements ExcelWriter {
    */
   @Override
   public DefaultExcelWriter export(ExcelWriteContext context) {
+    createWorkbookIfNull(context);
+
     Sheet sheet = StringUtils.isEmpty(context.getSheetName())
         ? workbook.createSheet()
         : workbook.createSheet(context.getSheetName());
@@ -85,6 +86,17 @@ public class DefaultExcelWriter implements ExcelWriter {
     }
 
     return this;
+  }
+
+  /**
+   * 创建工作本
+   * @param context 一张sheet上下文
+   */
+  private void createWorkbookIfNull(ExcelWriteContext context) {
+    // 不存在则创建目录
+    if (null == workbook) {
+      workbook = excelType.workbook(context.getDatasource().size());
+    }
   }
 
 
