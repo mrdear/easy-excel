@@ -48,7 +48,7 @@ public class CustomExcelExportExample1Test {
     List<UserWithAnnotation> result = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       UserWithAnnotation user =
-          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(), new Date());
+          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(),"ignore nickname", new Date());
       result.add(user);
     }
     return result;

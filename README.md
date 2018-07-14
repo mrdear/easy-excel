@@ -9,7 +9,7 @@
 <dependency>
   <groupId>io.github.mrdear</groupId>
   <artifactId>excel</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 </dependency>
 
 ```
@@ -22,6 +22,7 @@
 - **ExcelField**：修饰实体类注解，Excel中最麻烦的是header，因此提倡每一张报表单独对应一个POJO类，使用注解标识相应字段。
 - **ExcelWriteContext**：针对导出过程中一张sheet的配置，使用Builder模式构建。
 - **ExcelReadContext**：针对读取过程中一张sheet的配置，使用Builder模式构建。
+- **ExcelIgnore**: 修饰字段,可以指定忽略某一字段
 
 ## Example
 

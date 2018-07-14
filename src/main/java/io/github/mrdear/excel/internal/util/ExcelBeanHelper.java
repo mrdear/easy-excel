@@ -1,12 +1,13 @@
 package io.github.mrdear.excel.internal.util;
 
+import io.github.mrdear.excel.ExcelException;
+import io.github.mrdear.excel.annotation.ExcelField;
+import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
+import io.github.mrdear.excel.domain.ExcelWriterHeader;
 
 import org.apache.poi.ss.usermodel.Cell;
 
-import io.github.mrdear.excel.ExcelException;
-import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.domain.ExcelWriterHeader;
 import javafx.util.Pair;
 
 import java.lang.reflect.Field;
@@ -68,7 +69,10 @@ public class ExcelBeanHelper {
     final Field[] fields = bean.getClass().getDeclaredFields();
 
     return Arrays.stream(fields)
+        // 过滤掉内置字段
         .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
+        // 过滤掉指定忽略的字段
+        .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
           x.setAccessible(true);
           ExcelField annotation = x.getAnnotation(ExcelField.class);
@@ -91,6 +95,8 @@ public class ExcelBeanHelper {
     Field[] fields = clazz.getDeclaredFields();
     return Arrays.stream(fields)
         .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
+        // 过滤掉指定忽略的字段
+        .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
           x.setAccessible(true);
           ExcelField annotation = x.getAnnotation(ExcelField.class);

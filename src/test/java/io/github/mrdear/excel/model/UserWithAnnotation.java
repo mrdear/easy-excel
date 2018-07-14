@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import io.github.mrdear.excel.annotation.ExcelField;
+import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.convert.DateToStringConvert;
 import io.github.mrdear.excel.domain.convert.StringToDateConvert;
 
@@ -24,6 +25,9 @@ public class UserWithAnnotation {
 
   @ExcelField(columnName = "用户密码")
   private String passwd;
+
+  @ExcelIgnore
+  private String nickName;
 
   @ExcelField(columnName = "登录日期",
       writerConvert = DateToStringConvert.class,

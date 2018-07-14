@@ -1,12 +1,12 @@
 package io.github.mrdear.excel.writer;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.model.User;
 import io.github.mrdear.excel.model.UserWithAnnotation;
+
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class SimpleExcelExportTest {
     List<UserWithAnnotation> result = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       UserWithAnnotation user =
-          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(), new Date());
+          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(),"ignore nickname", new Date());
       result.add(user);
     }
     return result;
