@@ -167,7 +167,7 @@ public class ExcelBeanHelper {
           return null;
         })
         .filter(x -> x!= null && !Objects.equals(x.getKey(), "this$0"))
-        .collect(Collectors.toMap(Pair::getKey, Pair::getValue,(v1,v2) -> v1));
+        .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }
 
 }

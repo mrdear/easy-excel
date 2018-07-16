@@ -7,11 +7,9 @@ import io.github.mrdear.excel.model.UserWithAnnotation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +17,6 @@ import java.util.UUID;
  * @author Quding Ding
  * @since 2018/6/29
  */
-@Ignore
 public class CustomExcelExportExample1Test {
 
   @Test
@@ -48,7 +45,7 @@ public class CustomExcelExportExample1Test {
     List<UserWithAnnotation> result = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       UserWithAnnotation user =
-          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(),"ignore nickname", new Date());
+          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(),"ignore nickname", null);
       result.add(user);
     }
     return result;
