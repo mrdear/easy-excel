@@ -121,10 +121,14 @@ public class ExcelBeanHelper {
    * @param value 值类型
    */
   public static void autoFitCell(Cell cell, Object value) {
+    if (null == value) {
+      return;
+    }
+
     if (value instanceof Date) {
       cell.setCellValue((Date) value);
     } else {
-      cell.setCellValue(null == value ? "" : String.valueOf(value));
+      cell.setCellValue(String.valueOf(value));
     }
   }
 

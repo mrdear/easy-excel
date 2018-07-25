@@ -6,7 +6,7 @@
 
     <groupId>io.github.mrdear</groupId>
     <artifactId>excel</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.5</version>
     <name>easy-excel</name>
     <url>https://github.com/mrdear/easy-excel</url>
     <description>一款方便操作excel的封装</description>
