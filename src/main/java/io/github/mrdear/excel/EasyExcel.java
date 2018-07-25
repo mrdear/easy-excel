@@ -1,11 +1,12 @@
 package io.github.mrdear.excel;
 
+import io.github.mrdear.excel.domain.ExcelType;
 import io.github.mrdear.excel.read.DefaultExcelReader;
 import io.github.mrdear.excel.read.ExcelReader;
-import io.github.mrdear.excel.domain.ExcelType;
-import io.github.mrdear.excel.write.ExcelWriter;
 import io.github.mrdear.excel.write.DefaultExcelWriter;
+import io.github.mrdear.excel.write.ExcelWriter;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -69,6 +70,21 @@ public class EasyExcel {
    * @return 读取服务
    */
   public static ExcelReader read(InputStream inputStream) {
+    return new DefaultExcelReader(inputStream);
+  }
+
+  /**
+   * 从文件路径中读取对应的文件
+   * @param fullFilePath 文件全路径名
+   * @return 读取服务
+   */
+  public static ExcelReader read(String fullFilePath) {
+    FileInputStream inputStream;
+    try {
+      inputStream = new FileInputStream(fullFilePath);
+    } catch (FileNotFoundException e) {
+      throw new ExcelException(e);
+    }
     return new DefaultExcelReader(inputStream);
   }
 }

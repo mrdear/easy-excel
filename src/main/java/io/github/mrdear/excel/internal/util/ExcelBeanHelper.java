@@ -6,6 +6,7 @@ import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
 import javafx.util.Pair;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 /**
  * 导表过程中对Bean的一些处理
+ *
  * @author Quding Ding
  * @since 2018/6/28
  */
@@ -30,6 +32,7 @@ public class ExcelBeanHelper {
 
   /**
    * bean转Map函数,支持使用自定义注解
+   *
    * @param bean 对应的bean
    * @return map中 key 属性名  属性值
    */
@@ -51,8 +54,9 @@ public class ExcelBeanHelper {
 
   /**
    * 通过bean拿到对应的excel header
+   *
    * @param bean 实例
-   * @param <T> bean类型,支持LinkedHashMap 与 class
+   * @param <T>  bean类型,支持LinkedHashMap 与 class
    * @return LinkedHashMap key field name  value ExcelWriterHeader
    */
   @SuppressWarnings("unchecked")
@@ -87,8 +91,9 @@ public class ExcelBeanHelper {
 
   /**
    * bean转为对应的读操作header
+   *
    * @param clazz 实体类型
-   * @param <T> 试题类型
+   * @param <T>   试题类型
    * @return 读操作header, key columnName value ExcelReadHeader
    */
   public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz) {
@@ -111,21 +116,23 @@ public class ExcelBeanHelper {
 
   /**
    * 根据自身值类型自动填入表单对应的类型
-   * @param cell 表单格子
+   *
+   * @param cell  表单格子
    * @param value 值类型
    */
   public static void autoFitCell(Cell cell, Object value) {
     if (value instanceof Date) {
       cell.setCellValue((Date) value);
     } else {
-      cell.setCellValue(String.valueOf(value));
+      cell.setCellValue(null == value ? "" : String.valueOf(value));
     }
   }
 
   /**
    * 创建一个bean
+   *
    * @param clazz 创建bean
-   * @param <T> bean类型
+   * @param <T>   bean类型
    * @return 实例
    */
   public static <T> T newInstance(Class<T> clazz) {
@@ -140,7 +147,21 @@ public class ExcelBeanHelper {
   public static void fieldSetValue(Field field, Object target, Object value) {
     try {
       field.setAccessible(true);
-      field.set(target, value);
+      Class<?> fieldType = field.getType();
+      if (value == null) {
+        return;
+      }
+      if (fieldType.equals(Long.class) || fieldType.equals(long.class)) {
+        field.set(target, NumberUtils.toLong(String.valueOf(value)));
+      } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
+        field.set(target, NumberUtils.toDouble(String.valueOf(value)));
+      } else if (fieldType.equals(Integer.class) || fieldType.equals(int.class)) {
+        field.set(target, NumberUtils.toInt(String.valueOf(value)));
+      } else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
+        field.set(target, NumberUtils.toFloat(String.valueOf(value)));
+      } else {
+        field.set(target, value);
+      }
     } catch (IllegalAccessException e) {
       throw new ExcelException(e);
     }
@@ -149,6 +170,7 @@ public class ExcelBeanHelper {
 
   /**
    * bean to map
+   *
    * @param bean bean
    * @return map key is bean filed name,value is the filed value
    */
@@ -166,7 +188,7 @@ public class ExcelBeanHelper {
           }
           return null;
         })
-        .filter(x -> x!= null && !Objects.equals(x.getKey(), "this$0"))
+        .filter(x -> x != null && !Objects.equals(x.getKey(), "this$0"))
         .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }
 
