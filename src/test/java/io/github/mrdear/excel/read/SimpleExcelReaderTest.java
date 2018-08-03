@@ -2,6 +2,7 @@ package io.github.mrdear.excel.read;
 
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.domain.ExcelReadContext;
+import io.github.mrdear.excel.model.Id;
 import io.github.mrdear.excel.model.User;
 import io.github.mrdear.excel.model.UserWithAnnotation;
 
@@ -67,5 +68,19 @@ public class SimpleExcelReaderTest {
   }
 
 
+  @Test
+  public void testRead3() {
+    InputStream inputStream = SimpleExcelReaderTest.class
+        .getClassLoader().getResourceAsStream("ids.xlsx");
+    ExcelReader reader = EasyExcel.read(inputStream);
+
+    List<Id> result = reader.resolve(ExcelReadContext.<Id>builder()
+        .clazz(Id.class)
+        .build());
+
+    Assert.assertEquals(1332, result.size());
+    Assert.assertTrue(!result.isEmpty());
+    reader.close();
+  }
 
 }

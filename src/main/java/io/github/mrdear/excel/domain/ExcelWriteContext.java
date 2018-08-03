@@ -43,7 +43,6 @@ public class ExcelWriteContext {
 
   // package set
 
-  @SuppressWarnings("unchecked")
   <T> ExcelWriteContext setDatasource(List<T> datasource) {
     // 处理空情况
     if (null == datasource || datasource.isEmpty()) {

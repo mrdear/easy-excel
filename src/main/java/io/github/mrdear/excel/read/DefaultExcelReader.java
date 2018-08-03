@@ -68,7 +68,7 @@ public class DefaultExcelReader implements ExcelReader {
         if (null == tempHeader) {
           return;
         }
-        Object value = tempHeader.getConvert().apply(x.getStringCellValue());
+        Object value = tempHeader.getConvert().apply(ExcelBeanHelper.getColumnValue(x));
         ExcelBeanHelper.fieldSetValue(tempHeader.getField(), instance, value);
       });
 

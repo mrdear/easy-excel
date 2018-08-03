@@ -17,14 +17,14 @@ public class ExcelReadHeader {
   /**
    * 对应转换器
    */
-  private Function convert;
+  private Function<String, ?> convert;
 
-  private ExcelReadHeader(Field field, Function convert) {
+  private ExcelReadHeader(Field field, Function<String, ?> convert) {
     this.field = field;
     this.convert = convert;
   }
 
-  public static ExcelReadHeader create(Field field, Function convert) {
+  public static ExcelReadHeader create(Field field, Function<String, ?> convert) {
     return new ExcelReadHeader(field, convert);
   }
 
@@ -36,7 +36,7 @@ public class ExcelReadHeader {
     return field;
   }
 
-  public Function getConvert() {
+  public Function<String, ?> getConvert() {
     return convert;
   }
 }

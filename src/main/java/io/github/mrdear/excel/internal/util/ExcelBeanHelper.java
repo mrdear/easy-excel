@@ -13,6 +13,7 @@ import javafx.util.Pair;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -127,9 +128,12 @@ public class ExcelBeanHelper {
 
     if (value instanceof Date) {
       cell.setCellValue((Date) value);
+    } else if (value instanceof Calendar) {
+      cell.setCellValue((Calendar) value);
     } else {
       cell.setCellValue(String.valueOf(value));
     }
+
   }
 
   /**
@@ -156,13 +160,22 @@ public class ExcelBeanHelper {
         return;
       }
       if (fieldType.equals(Long.class) || fieldType.equals(long.class)) {
-        field.set(target, NumberUtils.toLong(String.valueOf(value)));
-      } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
-        field.set(target, NumberUtils.toDouble(String.valueOf(value)));
+        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
+        field.set(target, doubleValue.longValue());
       } else if (fieldType.equals(Integer.class) || fieldType.equals(int.class)) {
-        field.set(target, NumberUtils.toInt(String.valueOf(value)));
+        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
+        field.set(target, doubleValue.intValue());
+      } else if (fieldType.equals(Short.class) || fieldType.equals(short.class)) {
+        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
+        field.set(target, doubleValue.shortValue());
+      } else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
+        field.set(target, Boolean.valueOf(String.valueOf(value)));
+      } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
+        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
+        field.set(target, doubleValue);
       } else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
-        field.set(target, NumberUtils.toFloat(String.valueOf(value)));
+        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
+        field.set(target, doubleValue.floatValue());
       } else {
         field.set(target, value);
       }
@@ -171,6 +184,22 @@ public class ExcelBeanHelper {
     }
   }
 
+  public static String getColumnValue(Cell cell) {
+    switch (cell.getCellTypeEnum()) {
+      case STRING:
+      case FORMULA:
+      case BLANK:
+        return cell.getStringCellValue();
+      case BOOLEAN:
+        return Boolean.toString(cell.getBooleanCellValue());
+      case NUMERIC:
+        return Double.toString(cell.getNumericCellValue());
+      case _NONE:
+      case ERROR:
+      default:
+        return null;
+    }
+  }
 
   /**
    * bean to map

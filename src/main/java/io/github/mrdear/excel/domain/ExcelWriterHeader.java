@@ -15,9 +15,9 @@ public class ExcelWriterHeader {
   /**
    * 对应转换器
    */
-  private Function convert;
+  private Function<Object,Object> convert;
 
-  private ExcelWriterHeader(String name, Function convert) {
+  private ExcelWriterHeader(String name, Function<Object,Object> convert) {
     this.name = name;
     this.convert = convert;
   }
@@ -26,7 +26,7 @@ public class ExcelWriterHeader {
     return new ExcelWriterHeader(name, Function.identity());
   }
 
-  public static ExcelWriterHeader create(String name, Function convert) {
+  public static ExcelWriterHeader create(String name, Function<Object,Object> convert) {
     return new ExcelWriterHeader(name, convert);
   }
 
@@ -34,7 +34,7 @@ public class ExcelWriterHeader {
     return name;
   }
 
-  public Function getConvert() {
+  public Function<Object,Object> getConvert() {
     return convert;
   }
 

@@ -9,7 +9,7 @@
 <dependency>
   <groupId>io.github.mrdear</groupId>
   <artifactId>excel</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6</version>
 </dependency>
 
 ```

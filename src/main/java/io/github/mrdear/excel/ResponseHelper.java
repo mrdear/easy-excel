@@ -1,9 +1,8 @@
 package io.github.mrdear.excel;
 
-import org.apache.commons.codec.Charsets;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,7 +14,7 @@ public class ResponseHelper {
   public static OutputStream wrapper(HttpServletResponse resp, String fileName) {
     try {
       resp.setContentType("application/octet-stream");
-      resp.setCharacterEncoding(Charsets.UTF_8.name());
+      resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
       resp.setHeader("Content-Disposition", "attachment; filename=" + fileName);
       return resp.getOutputStream();
     } catch (IOException e) {
