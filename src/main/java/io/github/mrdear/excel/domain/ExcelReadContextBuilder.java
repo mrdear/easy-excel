@@ -1,12 +1,14 @@
 package io.github.mrdear.excel.domain;
 
+import io.github.mrdear.excel.internal.util.Assert;
+import io.github.mrdear.excel.internal.util.Pair;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
-import io.github.mrdear.excel.internal.util.Assert;
-
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * 对应的读取构造器
@@ -27,6 +29,15 @@ public class ExcelReadContextBuilder<T> {
     // 此时header可以确定
     if (null == this.context.getHeaders()) {
       this.context.setHeaders(clazz);
+    }
+    return this;
+  }
+
+  public ExcelReadContextBuilder<T> clazz(Class<T> clazz,  Function<Field, Pair<String, ExcelReadHeader>> convert) {
+    context.setClazz(clazz);
+    // 此时header可以确定
+    if (null == this.context.getHeaders()) {
+      this.context.setHeaders(clazz, convert);
     }
     return this;
   }

@@ -5,11 +5,11 @@ import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
+import io.github.mrdear.excel.internal.restrain.DefaultHeaderConvert;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
-import javafx.util.Pair;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -95,9 +96,11 @@ public class ExcelBeanHelper {
    *
    * @param clazz 实体类型
    * @param <T>   试题类型
+   * @param convert header转换器
    * @return 读操作header, key columnName value ExcelReadHeader
    */
-  public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz) {
+  public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz,
+      Function<Field,Pair<String,ExcelReadHeader>> convert) {
     Field[] fields = clazz.getDeclaredFields();
     return Arrays.stream(fields)
         .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
@@ -105,12 +108,12 @@ public class ExcelBeanHelper {
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
           x.setAccessible(true);
-          ExcelField annotation = x.getAnnotation(ExcelField.class);
-          if (null != annotation) {
-            return new Pair<>(annotation.columnName(), ExcelReadHeader.create(x,
-                ConvertHelper.getConvert(annotation.readerConvert())));
+          // 走默认规则
+          if (null == convert) {
+            DefaultHeaderConvert defaultConvert = ConvertHelper.getConvert(DefaultHeaderConvert.class);
+            return defaultConvert.apply(x);
           }
-          return new Pair<>(x.getName(), ExcelReadHeader.create(x));
+          return convert.apply(x);
         })
         .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }
