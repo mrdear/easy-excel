@@ -11,7 +11,7 @@ import java.util.function.Function;
  */
 public class DateToStringConvert implements Function<Date,String> {
 
-  private static FastDateFormat YMDHMS_ = FastDateFormat.getInstance("yyyy-MM-dd hh:MM:ss");
+  private static FastDateFormat YMDHMS_ = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public String apply(Date date) {

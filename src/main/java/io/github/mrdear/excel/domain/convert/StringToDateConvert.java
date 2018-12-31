@@ -1,9 +1,9 @@
 package io.github.mrdear.excel.domain.convert;
 
+import io.github.mrdear.excel.ExcelException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-
-import io.github.mrdear.excel.ExcelException;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.function.Function;
  */
 public class StringToDateConvert implements Function<String,Date> {
 
-  private static FastDateFormat YMDHMS_ = FastDateFormat.getInstance("yyyy-MM-dd hh:MM:ss");
+  private static FastDateFormat YMDHMS_ = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public Date apply(String s) {
