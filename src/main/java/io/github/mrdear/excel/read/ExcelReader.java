@@ -8,7 +8,7 @@ import java.util.List;
  * @author Quding Ding
  * @since 2018/6/29
  */
-public interface ExcelReader {
+public interface ExcelReader extends AutoCloseable {
 
   /**
    * 解析一张sheet
@@ -21,5 +21,6 @@ public interface ExcelReader {
   /**
    * 读取完释放资源
    */
+  @Override
   void close();
 }

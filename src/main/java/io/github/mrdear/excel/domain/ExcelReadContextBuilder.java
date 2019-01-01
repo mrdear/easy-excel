@@ -1,12 +1,14 @@
 package io.github.mrdear.excel.domain;
 
+import io.github.mrdear.excel.internal.util.Assert;
+import io.github.mrdear.excel.internal.util.Pair;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
-import io.github.mrdear.excel.internal.util.Assert;
-
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * 对应的读取构造器
@@ -22,11 +24,31 @@ public class ExcelReadContextBuilder<T> {
     this.context = context;
   }
 
+  /**
+   * 使用该方法默认会使用{@link io.github.mrdear.excel.annotation.ExcelField} 注解进行转换Header
+   * @param clazz 目标类
+   * @return header构造器
+   */
   public ExcelReadContextBuilder<T> clazz(Class<T> clazz) {
     context.setClazz(clazz);
     // 此时header可以确定
     if (null == this.context.getHeaders()) {
       this.context.setHeaders(clazz);
+    }
+    return this;
+  }
+
+  /**
+   * 使用该方法可以完全自定义每一个字段的转换逻辑
+   * @param clazz 目标类
+   * @param convert 针对类中每一个字段的转换逻辑
+   * @return header构造器
+   */
+  public ExcelReadContextBuilder<T> clazz(Class<T> clazz,  Function<Field, Pair<String, ExcelReadHeader>> convert) {
+    context.setClazz(clazz);
+    // 此时header可以确定
+    if (null == this.context.getHeaders()) {
+      this.context.setHeaders(clazz, convert);
     }
     return this;
   }
