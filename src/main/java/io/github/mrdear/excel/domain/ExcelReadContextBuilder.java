@@ -24,6 +24,11 @@ public class ExcelReadContextBuilder<T> {
     this.context = context;
   }
 
+  /**
+   * 使用该方法默认会使用{@link io.github.mrdear.excel.annotation.ExcelField} 注解进行转换Header
+   * @param clazz 目标类
+   * @return header构造器
+   */
   public ExcelReadContextBuilder<T> clazz(Class<T> clazz) {
     context.setClazz(clazz);
     // 此时header可以确定
@@ -33,6 +38,12 @@ public class ExcelReadContextBuilder<T> {
     return this;
   }
 
+  /**
+   * 使用该方法可以完全自定义每一个字段的转换逻辑
+   * @param clazz 目标类
+   * @param convert 针对类中每一个字段的转换逻辑
+   * @return header构造器
+   */
   public ExcelReadContextBuilder<T> clazz(Class<T> clazz,  Function<Field, Pair<String, ExcelReadHeader>> convert) {
     context.setClazz(clazz);
     // 此时header可以确定
