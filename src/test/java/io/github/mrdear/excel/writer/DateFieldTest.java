@@ -12,12 +12,15 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author rxliuli
@@ -25,11 +28,12 @@ import java.util.stream.IntStream;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DateFieldTest {
   private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
+  private final int count = 5;
 
   @Test
   @Order(1)
-  public void exportVoList() {
-    final List<Person> users = mockUser(5);
+  public void exportDateList() {
+    final List<Person> users = mockUser(count);
     EasyExcel.export(currentPath + "/test.xlsx")
         .export(ExcelWriteContext.builder()
             .datasource(users)
@@ -40,26 +44,21 @@ public class DateFieldTest {
 
   @Test
   @Order(2)
-  public void importVoList() {
+  public void importDateList() {
     try (ExcelReader reader = EasyExcel.read(new FileInputStream(currentPath + "/test.xlsx"))) {
       List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
           .clazz(Person.class)
           .build());
-      System.out.println(result);
+      assertThat(result)
+          .hasSize(count);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
   }
 
-  @Test
-  public void LocalDateTime() {
-    final String str = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    System.out.println(str);
-  }
-
   private List<Person> mockUser(int count) {
     return IntStream.range(0, count)
-        .mapToObj(i -> new Person("姓名 " + count, LocalDateTime.now(), new Date()))
+        .mapToObj(i -> new Person("姓名 " + count, LocalDateTime.now(), new Date(), LocalDate.now(), LocalTime.now()))
         .collect(Collectors.toList());
   }
 }

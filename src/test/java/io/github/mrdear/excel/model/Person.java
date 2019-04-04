@@ -2,10 +2,14 @@ package io.github.mrdear.excel.model;
 
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.domain.convert.DateConverter;
+import io.github.mrdear.excel.domain.convert.LocalDateConverter;
 import io.github.mrdear.excel.domain.convert.LocalDateTimeConverter;
+import io.github.mrdear.excel.domain.convert.LocalTimeConverter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -18,14 +22,20 @@ public class Person {
   private LocalDateTime birthday;
   @ExcelField(columnName = "日期", convert = DateConverter.class)
   private Date date;
+  @ExcelField(columnName = "本地日期", convert = LocalDateConverter.class)
+  private LocalDate localDate;
+  @ExcelField(columnName = "本地时间", convert = LocalTimeConverter.class)
+  private LocalTime localTime;
 
   public Person() {
   }
 
-  public Person(String username, LocalDateTime birthday, Date date) {
+  public Person(String username, LocalDateTime birthday, Date date, LocalDate localDate, LocalTime localTime) {
     this.username = username;
     this.birthday = birthday;
     this.date = date;
+    this.localDate = localDate;
+    this.localTime = localTime;
   }
 
   public Date getDate() {

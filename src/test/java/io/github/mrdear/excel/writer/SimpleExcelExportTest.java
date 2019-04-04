@@ -4,7 +4,6 @@ import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.model.User;
 import io.github.mrdear.excel.model.UserWithAnnotation;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -13,7 +12,6 @@ import java.util.*;
  * @author Quding Ding
  * @since 2018/6/29
  */
-@Ignore
 public class SimpleExcelExportTest {
   private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
 
