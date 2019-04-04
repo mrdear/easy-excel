@@ -6,7 +6,7 @@ package io.github.mrdear.excel.domain.convert;
  * @author rxliuli
  */
 public interface ConverterConstant {
-  DefaultConverter defaultConverter = new DefaultConverter();
-  DateConverter dateConverter = new DateConverter();
-  LocalDateTimeConverter lcoalDateTimeConverter = new LocalDateTimeConverter();
+  DefaultConverter DEFAULT_CONVERTER = new DefaultConverter();
+  DateConverter DATE_CONVERTER = new DateConverter();
+  LocalDateTimeConverter LCOAL_DATE_TIME_CONVERTER = new LocalDateTimeConverter();
 }
