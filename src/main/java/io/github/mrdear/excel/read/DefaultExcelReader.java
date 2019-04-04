@@ -4,7 +4,7 @@ import io.github.mrdear.excel.ExcelException;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -68,7 +68,8 @@ public class DefaultExcelReader implements ExcelReader {
         if (null == tempHeader) {
           return;
         }
-        Object value = tempHeader.getConvert().apply(ExcelBeanHelper.getColumnValue(x));
+        final String columnValue = ExcelBeanHelper.getColumnValue(x);
+        Object value = StringUtils.isEmpty(columnValue) ? null : tempHeader.getConvert().from(columnValue);
         ExcelBeanHelper.fieldSetValue(tempHeader.getField(), instance, value);
       });
 
@@ -91,8 +92,9 @@ public class DefaultExcelReader implements ExcelReader {
 
   /**
    * 获取到表头
+   *
    * @param header header表头
-   * @return 表头,有序
+   * @return 表头, 有序
    */
   private List<String> getHeaders(Row header) {
     List<String> headers = new ArrayList<>();

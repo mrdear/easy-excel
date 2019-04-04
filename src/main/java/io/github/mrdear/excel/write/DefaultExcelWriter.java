@@ -6,7 +6,6 @@ import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
 import io.github.mrdear.excel.internal.util.Assert;
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,13 +26,11 @@ import java.util.Map;
 public class DefaultExcelWriter implements ExcelWriter {
 
   private static Logger logger = LoggerFactory.getLogger(DefaultExcelWriter.class);
-
+  private final ExcelType excelType;
   /**
    * 工作簿
    */
   private Workbook workbook;
-
-  private final ExcelType excelType;
   /**
    * 输出目标
    */
@@ -81,7 +78,7 @@ public class DefaultExcelWriter implements ExcelWriter {
       headers.forEach((k, v) -> {
         Cell cell = row.createCell(tempCol[0]++);
         Object value = rowData.get(k);
-        ExcelBeanHelper.autoFitCell(cell, v.getConvert().apply(value));
+        ExcelBeanHelper.autoFitCell(cell, value == null ? null : v.getConvert().to(value));
       });
     }
 
@@ -90,6 +87,7 @@ public class DefaultExcelWriter implements ExcelWriter {
 
   /**
    * 创建工作本
+   *
    * @param context 一张sheet上下文
    */
   private void createWorkbookIfNull(ExcelWriteContext context) {

@@ -5,23 +5,13 @@ import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
+import io.github.mrdear.excel.domain.convert.IConverter;
 import io.github.mrdear.excel.internal.restrain.DefaultHeaderConvert;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
-
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -83,8 +73,9 @@ public class ExcelBeanHelper {
           x.setAccessible(true);
           ExcelField annotation = x.getAnnotation(ExcelField.class);
           if (null != annotation) {
+            final IConverter<Object, String> convert = ConvertHelper.getConvert(annotation.convert());
             return new Pair<>(x.getName(), ExcelWriterHeader.create(annotation.columnName(),
-                ConvertHelper.getConvert(annotation.writerConvert())));
+                convert));
           }
           return new Pair<>(x.getName(), ExcelWriterHeader.create(x.getName()));
         })
@@ -94,13 +85,13 @@ public class ExcelBeanHelper {
   /**
    * bean转为对应的读操作header
    *
-   * @param clazz 实体类型
-   * @param <T>   试题类型
+   * @param clazz   实体类型
+   * @param <T>     试题类型
    * @param convert header转换器
    * @return 读操作header, key columnName value ExcelReadHeader
    */
   public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz,
-      Function<Field,Pair<String,ExcelReadHeader>> convert) {
+                                                                     IConverter<Field, Pair<String, ExcelReadHeader>> convert) {
     Field[] fields = clazz.getDeclaredFields();
     return Arrays.stream(fields)
         .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
@@ -111,9 +102,9 @@ public class ExcelBeanHelper {
           // 走默认规则
           if (null == convert) {
             DefaultHeaderConvert defaultConvert = ConvertHelper.getConvert(DefaultHeaderConvert.class);
-            return defaultConvert.apply(x);
+            return defaultConvert.to(x);
           }
-          return convert.apply(x);
+          return convert.to(x);
         })
         .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }

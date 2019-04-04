@@ -3,10 +3,8 @@ package io.github.mrdear.excel.read;
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.model.UserWithAnnotation;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -16,7 +14,6 @@ import java.util.List;
  * @author Quding Ding
  * @since 2018/6/29
  */
-@Ignore
 public class CustomExcelReadExample1Test {
 
   @Test

@@ -1,12 +1,12 @@
 package io.github.mrdear.excel.annotation;
 
-import io.github.mrdear.excel.domain.convert.DefaultFunction;
+import io.github.mrdear.excel.domain.convert.DefaultConverter;
+import io.github.mrdear.excel.domain.convert.IConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.function.Function;
 
 /**
  * @author Quding Ding
@@ -23,11 +23,5 @@ public @interface ExcelField {
   /**
    * 写入时所采取的转换器
    */
-  Class<? extends Function> writerConvert() default DefaultFunction.class;
-
-  /**
-   * 读取时所采取的转换器
-   */
-  Class<? extends Function> readerConvert() default DefaultFunction.class;
-
+  Class<? extends IConverter> convert() default DefaultConverter.class;
 }
