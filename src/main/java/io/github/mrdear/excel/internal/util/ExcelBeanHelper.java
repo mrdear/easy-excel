@@ -6,7 +6,7 @@ import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
 import io.github.mrdear.excel.domain.convert.IConverter;
-import io.github.mrdear.excel.internal.restrain.DefaultHeaderConvert;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
@@ -62,22 +62,18 @@ public class ExcelBeanHelper {
               Map::putAll);
     }
     // 为bean情况 获取到所有字段
-    final Field[] fields = bean.getClass().getDeclaredFields();
-
-    return Arrays.stream(fields)
-        // 过滤掉内置字段
-        .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
+    return SuperClassUtil.getAllDeclaredField(bean.getClass()).stream()
+        // 过滤掉没有使用 ExcelField 注解指定的字段
+        .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
           x.setAccessible(true);
-          ExcelField annotation = x.getAnnotation(ExcelField.class);
-          if (null != annotation) {
-            final IConverter<Object, String> convert = ConvertHelper.getConvert(annotation.convert());
-            return new Pair<>(x.getName(), ExcelWriterHeader.create(annotation.columnName(),
-                convert));
-          }
-          return new Pair<>(x.getName(), ExcelWriterHeader.create(x.getName()));
+          ExcelField excelField = x.getAnnotation(ExcelField.class);
+          final IConverter<Object, String> convert = ConvertHelper.getConvert(excelField.convert());
+          final String columnName = excelField.columnName();
+          return new Pair<>(x.getName(), ExcelWriterHeader.create(StringUtils.isEmpty(columnName) ? x.getName() : columnName,
+              convert));
         })
         .collect(LinkedHashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }
@@ -85,26 +81,22 @@ public class ExcelBeanHelper {
   /**
    * bean转为对应的读操作header
    *
-   * @param clazz   实体类型
-   * @param <T>     试题类型
-   * @param convert header转换器
+   * @param clazz 实体类型
+   * @param <T>   试题类型
    * @return 读操作header, key columnName value ExcelReadHeader
    */
-  public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz,
-                                                                     IConverter<Field, Pair<String, ExcelReadHeader>> convert) {
-    Field[] fields = clazz.getDeclaredFields();
-    return Arrays.stream(fields)
-        .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
+  public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz) {
+    return SuperClassUtil.getAllDeclaredField(clazz).stream()
+        // 过滤掉没有使用 ExcelField 注解指定的字段
+        .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
           x.setAccessible(true);
-          // 走默认规则
-          if (null == convert) {
-            DefaultHeaderConvert defaultConvert = ConvertHelper.getConvert(DefaultHeaderConvert.class);
-            return defaultConvert.to(x);
-          }
-          return convert.to(x);
+          ExcelField annotation = x.getAnnotation(ExcelField.class);
+          final String columnName = annotation.columnName();
+          return new Pair<>(StringUtils.isEmpty(columnName) ? x.getName() : columnName, ExcelReadHeader.create(x,
+              ConvertHelper.getConvert(annotation.convert())));
         })
         .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }

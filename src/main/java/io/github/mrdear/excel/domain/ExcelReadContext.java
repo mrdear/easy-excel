@@ -1,13 +1,8 @@
 package io.github.mrdear.excel.domain;
 
-import io.github.mrdear.excel.domain.convert.IConverter;
-import io.github.mrdear.excel.internal.restrain.DefaultHeaderConvert;
-import io.github.mrdear.excel.internal.util.ConvertHelper;
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
-import io.github.mrdear.excel.internal.util.Pair;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -50,19 +45,6 @@ public class ExcelReadContext<T> {
 
   // package set
 
-  /**
-   * 高级用法,开放指定class的field读取转换接口,用于自定义场景
-   *
-   * @param clazz   对应的header类
-   * @param convert 转换器
-   * @return context
-   */
-  ExcelReadContext<T> setHeaders(Class<T> clazz, IConverter<Field, Pair<String, ExcelReadHeader>> convert) {
-    // 使用自定义Header转换器
-    this.headers = ExcelBeanHelper.beanToReaderHeaders(clazz, convert);
-    return this;
-  }
-
   public Class<T> getClazz() {
     return clazz;
   }
@@ -90,12 +72,12 @@ public class ExcelReadContext<T> {
     return this;
   }
 
-
-  // get
-
   public BiConsumer<Sheet, ExcelReadContext> getReadSheetHook() {
     return readSheetHook;
   }
+
+
+  // get
 
   ExcelReadContext<T> setReadSheetHook(BiConsumer<Sheet, ExcelReadContext> readSheetHook) {
     this.readSheetHook = readSheetHook;
@@ -113,8 +95,7 @@ public class ExcelReadContext<T> {
 
   ExcelReadContext<T> setHeaders(Class<T> clazz) {
     // 使用默认Header转换器
-    final DefaultHeaderConvert convert = ConvertHelper.getConvert(DefaultHeaderConvert.class);
-    this.headers = ExcelBeanHelper.beanToReaderHeaders(clazz, convert);
+    this.headers = ExcelBeanHelper.beanToReaderHeaders(clazz);
     return this;
   }
 }

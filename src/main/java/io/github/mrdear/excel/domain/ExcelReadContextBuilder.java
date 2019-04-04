@@ -1,11 +1,8 @@
 package io.github.mrdear.excel.domain;
 
-import io.github.mrdear.excel.domain.convert.IConverter;
 import io.github.mrdear.excel.internal.util.Assert;
-import io.github.mrdear.excel.internal.util.Pair;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -35,22 +32,6 @@ public class ExcelReadContextBuilder<T> {
     // 此时header可以确定
     if (null == this.context.getHeaders()) {
       this.context.setHeaders(clazz);
-    }
-    return this;
-  }
-
-  /**
-   * 使用该方法可以完全自定义每一个字段的转换逻辑
-   *
-   * @param clazz   目标类
-   * @param convert 针对类中每一个字段的转换逻辑
-   * @return header构造器
-   */
-  public ExcelReadContextBuilder<T> clazz(Class<T> clazz, IConverter<Field, Pair<String, ExcelReadHeader>> convert) {
-    context.setClazz(clazz);
-    // 此时header可以确定
-    if (null == this.context.getHeaders()) {
-      this.context.setHeaders(clazz, convert);
     }
     return this;
   }
