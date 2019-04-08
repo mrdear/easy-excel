@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author rxliuli
  */
 class LocalDateConverterTest {
-  private final IConverter<LocalDate, String> converter = new LocalDateConverter();
+  private final IConverter<LocalDate> converter = new LocalDateConverter();
   private final LocalDate now = LocalDate.now();
 
   @Test

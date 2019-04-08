@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class LocalTimeConverterTest {
   private final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-  private final IConverter<LocalTime, String> converter = new LocalTimeConverter();
+  private final IConverter<LocalTime> converter = new LocalTimeConverter();
   private final LocalTime now = LocalTime.now();
 
   @Test

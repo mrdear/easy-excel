@@ -19,14 +19,14 @@ public class ExcelReadHeader {
   /**
    * 对应转换器
    */
-  private IConverter<Object, String> convert;
+  private IConverter<?> convert;
 
-  private ExcelReadHeader(Field field, IConverter<Object, String> convert) {
+  private ExcelReadHeader(Field field, IConverter<?> convert) {
     this.field = field;
     this.convert = convert;
   }
 
-  public static ExcelReadHeader create(Field field, IConverter<Object, String> convert) {
+  public static ExcelReadHeader create(Field field, IConverter<?> convert) {
     return new ExcelReadHeader(field, convert);
   }
 
@@ -38,7 +38,7 @@ public class ExcelReadHeader {
     return field;
   }
 
-  public IConverter<Object, String> getConvert() {
+  public IConverter<?> getConvert() {
     return convert;
   }
 }

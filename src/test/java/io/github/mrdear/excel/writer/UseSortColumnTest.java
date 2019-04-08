@@ -54,16 +54,15 @@ class UseSortColumnTest {
 
   @Test
   @Order(2)
-  void importDateList() {
+  void importDateList() throws FileNotFoundException {
     try (ExcelReader reader = EasyExcel.read(new FileInputStream(fileName))) {
       List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
           .clazz(Person.class)
-          .build());
+          .build())
+          .getData();
       System.out.println(join(result));
       assertThat(result)
           .hasSize(count);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     }
   }
 
@@ -74,13 +73,13 @@ class UseSortColumnTest {
   }
 
   public static class Person {
-    @ExcelField(columnName = "姓名", sort = 1)
+    @ExcelField(columnName = "姓名", order = 1)
     private String username;
-    @ExcelField(columnName = "日期", sort = 2)
+    @ExcelField(columnName = "日期", order = 2)
     private Date date;
-    @ExcelField(columnName = "本地日期", sort = 3)
+    @ExcelField(columnName = "本地日期", order = 3)
     private LocalDate localDate;
-    @ExcelField(columnName = "本地时间", sort = 4)
+    @ExcelField(columnName = "本地时间", order = 4)
     private LocalTime localTime;
 
     public Person() {

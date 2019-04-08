@@ -7,7 +7,7 @@ import java.util.Objects;
  *
  * @author rxliuli
  */
-public class DefaultConverter implements IConverter<Object, String> {
+public class DefaultConverter implements IConverter<Object> {
   @Override
   public String to(Object o) {
     return Objects.toString(o);

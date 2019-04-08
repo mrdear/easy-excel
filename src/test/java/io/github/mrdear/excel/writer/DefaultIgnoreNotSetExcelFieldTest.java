@@ -4,6 +4,7 @@ import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
+import io.github.mrdear.excel.domain.ImportDomain;
 import io.github.mrdear.excel.read.ExcelReader;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.MethodOrderer;
@@ -46,12 +47,12 @@ class DefaultIgnoreNotSetExcelFieldTest {
   @Order(2)
   void testIgnoreFieldImport() {
     try (final ExcelReader reader = EasyExcel.read(currentPath + "/test.xlsx");) {
-      final List<User> list = reader.resolve(
+      final ImportDomain<User> domain = reader.resolve(
           ExcelReadContext.<User>builder()
               .clazz(User.class)
               .build()
       );
-      assertThat(list)
+      assertThat(domain.getData())
           .hasSize(count)
           .allMatch(user -> user.getSex() == null);
     }

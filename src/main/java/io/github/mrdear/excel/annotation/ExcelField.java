@@ -28,5 +28,5 @@ public @interface ExcelField {
   /**
    * 表格的列排序，默认全部为 0（不排序）
    */
-  int sort() default 0;
+  int order() default 0;
 }

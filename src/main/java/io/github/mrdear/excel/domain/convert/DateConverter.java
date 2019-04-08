@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author rxliuli
  */
-public class DateConverter implements IConverter<Date, String> {
+public class DateConverter implements IConverter<Date> {
   private static final FastDateFormat FAST_DATE_FORMAT = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
   @Override

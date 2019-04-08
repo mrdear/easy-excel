@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author rxliuli
  */
-public class LocalTimeConverter implements IConverter<LocalTime, String> {
+public class LocalTimeConverter implements IConverter<LocalTime> {
   private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
   @Override

@@ -9,7 +9,6 @@ import io.github.mrdear.excel.domain.convert.ConverterFactory;
 import io.github.mrdear.excel.domain.convert.IConverter;
 import io.github.mrdear.excel.domain.convert.NotSpecifyConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.lang.reflect.Field;
@@ -69,7 +68,7 @@ public class ExcelBeanHelper {
         .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
-        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).sort()))
+        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).order()))
         .map(x -> {
           final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
           return new Pair<>(x.getName(), ExcelWriterHeader.create(pair.getKey(), pair.getValue()));
@@ -90,7 +89,7 @@ public class ExcelBeanHelper {
         .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
-        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).sort()))
+        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).order()))
         .map(x -> {
           final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
           return new Pair<>(pair.getKey(), ExcelReadHeader.create(x, pair.getValue()));
@@ -112,7 +111,7 @@ public class ExcelBeanHelper {
     if (NotSpecifyConverter.class.equals(convertClass)) {
       convertClass = ConverterFactory.get(field.getType());
     }
-    final IConverter<Object, String> convert = ConvertHelper.getConvert(convertClass);
+    final IConverter<?> convert = ConvertHelper.getConvert(convertClass);
     final String columnName = excelField.columnName();
     final String name = StringUtils.isEmpty(columnName) ? field.getName() : columnName;
     return new Pair<>(name, convert);
@@ -157,30 +156,11 @@ public class ExcelBeanHelper {
   public static void fieldSetValue(Field field, Object target, Object value) {
     try {
       field.setAccessible(true);
-      Class<?> fieldType = field.getType();
+      // 如果字段值为空则不进行设置
       if (value == null) {
         return;
       }
-      if (fieldType.equals(Long.class) || fieldType.equals(long.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.longValue());
-      } else if (fieldType.equals(Integer.class) || fieldType.equals(int.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.intValue());
-      } else if (fieldType.equals(Short.class) || fieldType.equals(short.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.shortValue());
-      } else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
-        field.set(target, Boolean.valueOf(String.valueOf(value)));
-      } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue);
-      } else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.floatValue());
-      } else {
-        field.set(target, value);
-      }
+      field.set(target, value);
     } catch (IllegalAccessException e) {
       throw new ExcelException(e);
     }
@@ -192,10 +172,6 @@ public class ExcelBeanHelper {
       case FORMULA:
       case BLANK:
         return cell.getStringCellValue();
-      case BOOLEAN:
-        return Boolean.toString(cell.getBooleanCellValue());
-      case NUMERIC:
-        return Double.toString(cell.getNumericCellValue());
       case _NONE:
       case ERROR:
       default:

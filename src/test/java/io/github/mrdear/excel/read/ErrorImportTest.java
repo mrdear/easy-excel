@@ -1,18 +1,19 @@
-package io.github.mrdear.excel.writer;
+package io.github.mrdear.excel.read;
 
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
+import io.github.mrdear.excel.domain.ExcelImportError;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
-import io.github.mrdear.excel.read.ExcelReader;
+import io.github.mrdear.excel.domain.ImportDomain;
+import io.github.mrdear.excel.writer.DateFieldTest;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
@@ -27,12 +28,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author rxliuli
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DefaultUseConverterTest {
+public class ErrorImportTest {
   private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
   private final int count = 5;
-  private String fileName = currentPath + "/DefaultUseConverterTest.xlsx";
+  private String fileName = currentPath + "/ErrorImportTest.xlsx";
 
-  public static String join(Collection<?> collection) {
+  static String join(Collection<?> collection) {
     return collection.stream()
         .map(ToStringBuilder::reflectionToString)
         .collect(Collectors.joining("\n"));
@@ -53,16 +54,20 @@ class DefaultUseConverterTest {
   @Test
   @Order(2)
   void importDateList() {
-    try (ExcelReader reader = EasyExcel.read(new FileInputStream(fileName))) {
-      List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
+    final InputStream is = ErrorImportTest.class.getClassLoader().getResourceAsStream("./ErrorImportTest.xlsx");
+//    FileInputStream is = new FileInputStream("D:\\Text\\spring-boot\\easy-excel\\src\\test\\resources\\ErrorImportTest.xlsx");
+    try (final ExcelReader reader = EasyExcel.read(is)) {
+      ImportDomain<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
           .clazz(Person.class)
-          .build())
-          .getData();
-      System.out.println(join(result));
-      assertThat(result)
+          .build());
+      final List<Person> data = result.getData();
+      System.out.println(join(data));
+      List<ExcelImportError> errorList = result.getErrorList();
+      System.out.println(join(errorList));
+      assertThat(data)
           .hasSize(count);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+      assertThat(errorList)
+          .hasSize(3);
     }
   }
 
@@ -73,13 +78,13 @@ class DefaultUseConverterTest {
   }
 
   public static class Person {
-    @ExcelField(columnName = "姓名")
+    @ExcelField(columnName = "姓名", order = 1)
     private String username;
-    @ExcelField(columnName = "日期")
+    @ExcelField(columnName = "日期", order = 2)
     private Date date;
-    @ExcelField(columnName = "本地日期")
+    @ExcelField(columnName = "本地日期", order = 3)
     private LocalDate localDate;
-    @ExcelField(columnName = "本地时间")
+    @ExcelField(columnName = "本地时间", order = 4)
     private LocalTime localTime;
 
     public Person() {
@@ -120,5 +125,4 @@ class DefaultUseConverterTest {
           .toString();
     }
   }
-
 }

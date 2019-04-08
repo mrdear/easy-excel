@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author rxliuli
  */
-public class LocalDateConverter implements IConverter<LocalDate, String> {
+public class LocalDateConverter implements IConverter<LocalDate> {
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Override

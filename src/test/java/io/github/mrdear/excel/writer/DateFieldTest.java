@@ -48,7 +48,8 @@ public class DateFieldTest {
     try (ExcelReader reader = EasyExcel.read(new FileInputStream(currentPath + "/test.xlsx"))) {
       List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
           .clazz(Person.class)
-          .build());
+          .build())
+          .getData();
       assertThat(result)
           .hasSize(count);
     } catch (FileNotFoundException e) {

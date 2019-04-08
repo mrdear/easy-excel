@@ -1,20 +1,20 @@
-package io.github.mrdear.excel.writer;
+package io.github.mrdear.excel.read;
 
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
-import io.github.mrdear.excel.read.ExcelReader;
+import io.github.mrdear.excel.domain.convert.ConverterFactory;
+import io.github.mrdear.excel.domain.convert.IConverter;
+import io.github.mrdear.excel.writer.DateFieldTest;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -27,15 +27,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author rxliuli
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DefaultUseConverterTest {
+class CustomConverterTest {
   private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
   private final int count = 5;
-  private String fileName = currentPath + "/DefaultUseConverterTest.xlsx";
+  private String fileName = currentPath + "/CustomConverterTest.xlsx";
 
-  public static String join(Collection<?> collection) {
+  static String join(Collection<?> collection) {
     return collection.stream()
         .map(ToStringBuilder::reflectionToString)
         .collect(Collectors.joining("\n"));
+  }
+
+  @BeforeEach
+  void before() {
+    // 全局注册指定类型的转换器
+    ConverterFactory.register(LocalTime.class, CustomLocalTimeConverter.class);
   }
 
   @Test
@@ -52,7 +58,7 @@ class DefaultUseConverterTest {
 
   @Test
   @Order(2)
-  void importDateList() {
+  void importDateList() throws FileNotFoundException {
     try (ExcelReader reader = EasyExcel.read(new FileInputStream(fileName))) {
       List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
           .clazz(Person.class)
@@ -61,8 +67,6 @@ class DefaultUseConverterTest {
       System.out.println(join(result));
       assertThat(result)
           .hasSize(count);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     }
   }
 
@@ -72,14 +76,43 @@ class DefaultUseConverterTest {
         .collect(Collectors.toList());
   }
 
+  public static class CustomLocalDateConverter implements IConverter<LocalDate> {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+
+    @Override
+    public String to(LocalDate localDate) {
+      return localDate.format(formatter);
+    }
+
+    @Override
+    public LocalDate from(String to) {
+      return LocalDate.parse(to, formatter);
+    }
+  }
+
+  public static class CustomLocalTimeConverter implements IConverter<LocalTime> {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH时mm分ss秒");
+
+    @Override
+    public String to(LocalTime localDate) {
+      return localDate.format(formatter);
+    }
+
+    @Override
+    public LocalTime from(String to) {
+      return LocalTime.parse(to, formatter);
+    }
+  }
+
+
   public static class Person {
-    @ExcelField(columnName = "姓名")
+    @ExcelField(columnName = "姓名", order = 1)
     private String username;
-    @ExcelField(columnName = "日期")
+    @ExcelField(columnName = "日期", order = 2)
     private Date date;
-    @ExcelField(columnName = "本地日期")
+    @ExcelField(columnName = "本地日期", order = 3, convert = CustomLocalDateConverter.class)
     private LocalDate localDate;
-    @ExcelField(columnName = "本地时间")
+    @ExcelField(columnName = "本地时间", order = 4)
     private LocalTime localTime;
 
     public Person() {
@@ -120,5 +153,4 @@ class DefaultUseConverterTest {
           .toString();
     }
   }
-
 }
