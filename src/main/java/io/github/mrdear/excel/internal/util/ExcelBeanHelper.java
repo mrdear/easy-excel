@@ -127,15 +127,7 @@ public class ExcelBeanHelper {
     if (null == value) {
       return;
     }
-
-    if (value instanceof Date) {
-      cell.setCellValue((Date) value);
-    } else if (value instanceof Calendar) {
-      cell.setCellValue((Calendar) value);
-    } else {
-      cell.setCellValue(String.valueOf(value));
-    }
-
+    cell.setCellValue(String.valueOf(value));
   }
 
   /**

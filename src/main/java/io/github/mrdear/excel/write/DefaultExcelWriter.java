@@ -1,22 +1,21 @@
 package io.github.mrdear.excel.write;
 
 import io.github.mrdear.excel.ExcelException;
+import io.github.mrdear.excel.domain.ExcelImportError;
 import io.github.mrdear.excel.domain.ExcelType;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
 import io.github.mrdear.excel.internal.util.Assert;
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -82,7 +81,27 @@ public class DefaultExcelWriter implements ExcelWriter {
       });
     }
 
+    // 写错误数据
+    final List<ExcelImportError> errors = context.getErrors();
+    errors.forEach(error -> {
+      final Cell cell = sheet.getRow(error.getRow()).getCell(error.getCol());
+      final CellStyle style = getErrorCellStyle();
+      cell.setCellValue(error.getVal());
+      cell.setCellStyle(style);
+    });
     return this;
+  }
+
+  /**
+   * 获取错误样式
+   */
+  private CellStyle getErrorCellStyle() {
+    final CellStyle style = workbook.createCellStyle();
+    style.setFillForegroundColor(IndexedColors.RED1.getIndex());
+    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+    style.setFillBackgroundColor(IndexedColors.RED1.getIndex());
+    style.setFillPattern(FillPatternType.BIG_SPOTS);
+    return style;
   }
 
   /**

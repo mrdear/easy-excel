@@ -22,7 +22,6 @@ public class ExcelImportError {
    * 错误的值
    */
   private String val;
-
   /**
    * 抛出的异常
    */

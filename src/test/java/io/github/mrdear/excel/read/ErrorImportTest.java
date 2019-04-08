@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ErrorImportTest {
   private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
   private final int count = 5;
-  private String fileName = currentPath + "/ErrorImportTest.xlsx";
+  private String fileName = currentPath + "/ErrorImportTestExcel.xlsx";
 
   static String join(Collection<?> collection) {
     return collection.stream()
@@ -54,21 +54,30 @@ public class ErrorImportTest {
   @Test
   @Order(2)
   void importDateList() {
-    final InputStream is = ErrorImportTest.class.getClassLoader().getResourceAsStream("./ErrorImportTest.xlsx");
-//    FileInputStream is = new FileInputStream("D:\\Text\\spring-boot\\easy-excel\\src\\test\\resources\\ErrorImportTest.xlsx");
+    final InputStream is = ErrorImportTest.class.getClassLoader().getResourceAsStream("ErrorImportTestExcel.xlsx");
+    final ImportDomain<Person> result;
+    //    FileInputStream is = new FileInputStream("D:\\Text\\spring-boot\\easy-excel\\src\\test\\resources\\ErrorImportTestExcel.xlsx");
     try (final ExcelReader reader = EasyExcel.read(is)) {
-      ImportDomain<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
+      result = reader.resolve(ExcelReadContext.<Person>builder()
           .clazz(Person.class)
           .build());
-      final List<Person> data = result.getData();
-      System.out.println(join(data));
-      List<ExcelImportError> errorList = result.getErrorList();
-      System.out.println(join(errorList));
-      assertThat(data)
-          .hasSize(count);
-      assertThat(errorList)
-          .hasSize(3);
     }
+    final List<Person> data = result.getData();
+    System.out.println(join(data));
+    List<ExcelImportError> errorList = result.getErrors();
+    System.out.println(join(errorList));
+    assertThat(data)
+        .hasSize(count);
+    assertThat(errorList)
+        .hasSize(3);
+
+    EasyExcel.export(fileName)
+        .export(ExcelWriteContext.builder()
+            .datasource(data)
+            .errors(errorList)
+            .build()
+        )
+        .write();
   }
 
   private List<Person> mockUser(int count) {

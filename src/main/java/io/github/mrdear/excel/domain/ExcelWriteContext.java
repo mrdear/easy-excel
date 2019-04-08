@@ -1,7 +1,6 @@
 package io.github.mrdear.excel.domain;
 
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
-
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Collections;
@@ -29,19 +28,28 @@ public class ExcelWriteContext {
   /**
    * 创建工作目录后的hook
    */
-  private BiConsumer<Sheet, ExcelWriteContext> createSheetHook = (w, v) -> { };
+  private BiConsumer<Sheet, ExcelWriteContext> createSheetHook = (w, v) -> {
+  };
   /**
    * 起始行
    */
   private int startRow = 0;
 
   private String sheetName;
+  /**
+   * 错误列表
+   */
+  private List<ExcelImportError> errors = Collections.emptyList();
 
   public static ExcelWriteContextBuilder builder() {
     return new ExcelWriteContextBuilder();
   }
 
   // package set
+
+  public List<Map<String, Object>> getDatasource() {
+    return datasource;
+  }
 
   <T> ExcelWriteContext setDatasource(List<T> datasource) {
     // 处理空情况
@@ -51,6 +59,10 @@ public class ExcelWriteContext {
     }
     this.datasource = ExcelBeanHelper.beanToMap(datasource);
     return this;
+  }
+
+  public LinkedHashMap<String, ExcelWriterHeader> getHeaders() {
+    return headers;
   }
 
   /**
@@ -73,15 +85,24 @@ public class ExcelWriteContext {
     return this;
   }
 
-
   ExcelWriteContext setHeaders(LinkedHashMap<String, ExcelWriterHeader> headers) {
     this.headers = headers;
     return this;
   }
 
+  public BiConsumer<Sheet, ExcelWriteContext> getCreateSheetHook() {
+    return createSheetHook;
+  }
+
+  // public get
+
   ExcelWriteContext setCreateSheetHook(BiConsumer<Sheet, ExcelWriteContext> createSheetHook) {
     this.createSheetHook = createSheetHook;
     return this;
+  }
+
+  public int getStartRow() {
+    return startRow;
   }
 
   ExcelWriteContext setStartRow(int startRow) {
@@ -89,32 +110,21 @@ public class ExcelWriteContext {
     return this;
   }
 
+  public String getSheetName() {
+    return sheetName;
+  }
+
   ExcelWriteContext setSheetName(String sheetName) {
     this.sheetName = sheetName;
     return this;
   }
 
-  // public get
-
-
-  public List<Map<String, Object>> getDatasource() {
-    return datasource;
+  public List<ExcelImportError> getErrors() {
+    return errors;
   }
 
-
-  public LinkedHashMap<String, ExcelWriterHeader> getHeaders() {
-    return headers;
-  }
-
-  public BiConsumer<Sheet, ExcelWriteContext> getCreateSheetHook() {
-    return createSheetHook;
-  }
-
-  public int getStartRow() {
-    return startRow;
-  }
-
-  public String getSheetName() {
-    return sheetName;
+  public ExcelWriteContext setErrors(List<ExcelImportError> errors) {
+    this.errors = errors;
+    return this;
   }
 }

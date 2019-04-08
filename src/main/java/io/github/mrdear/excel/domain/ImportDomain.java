@@ -15,14 +15,14 @@ public class ImportDomain<T> {
   /**
    * 错误列表
    */
-  private List<ExcelImportError> errorList;
+  private List<ExcelImportError> errors;
 
   public ImportDomain() {
   }
 
-  public ImportDomain(List<T> data, List<ExcelImportError> errorList) {
+  public ImportDomain(List<T> data, List<ExcelImportError> errors) {
     this.data = data;
-    this.errorList = errorList;
+    this.errors = errors;
   }
 
   public List<T> getData() {
@@ -34,12 +34,12 @@ public class ImportDomain<T> {
     return this;
   }
 
-  public List<ExcelImportError> getErrorList() {
-    return errorList;
+  public List<ExcelImportError> getErrors() {
+    return errors;
   }
 
-  public ImportDomain<T> setErrorList(List<ExcelImportError> errorList) {
-    this.errorList = errorList;
+  public ImportDomain<T> setErrors(List<ExcelImportError> errors) {
+    this.errors = errors;
     return this;
   }
 }
