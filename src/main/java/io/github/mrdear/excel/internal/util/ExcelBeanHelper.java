@@ -5,7 +5,9 @@ import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
+import io.github.mrdear.excel.domain.convert.ConverterFactory;
 import io.github.mrdear.excel.domain.convert.IConverter;
+import io.github.mrdear.excel.domain.convert.NotSpecifyConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -68,12 +70,8 @@ public class ExcelBeanHelper {
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
-          x.setAccessible(true);
-          ExcelField excelField = x.getAnnotation(ExcelField.class);
-          final IConverter<Object, String> convert = ConvertHelper.getConvert(excelField.convert());
-          final String columnName = excelField.columnName();
-          return new Pair<>(x.getName(), ExcelWriterHeader.create(StringUtils.isEmpty(columnName) ? x.getName() : columnName,
-              convert));
+          final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
+          return new Pair<>(x.getName(), ExcelWriterHeader.create(pair.getKey(), pair.getValue()));
         })
         .collect(LinkedHashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }
@@ -92,13 +90,30 @@ public class ExcelBeanHelper {
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
         .map(x -> {
-          x.setAccessible(true);
-          ExcelField annotation = x.getAnnotation(ExcelField.class);
-          final String columnName = annotation.columnName();
-          return new Pair<>(StringUtils.isEmpty(columnName) ? x.getName() : columnName, ExcelReadHeader.create(x,
-              ConvertHelper.getConvert(annotation.convert())));
+          final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
+          return new Pair<>(pair.getKey(), ExcelReadHeader.create(x, pair.getValue()));
         })
         .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
+  }
+
+  /**
+   * 从字段中获取到对应的表头名字与转换器
+   *
+   * @param field 字段
+   * @return 使用 {@link Pair} 封装的两个字段
+   */
+  private static Pair<String, ? extends IConverter> castHeaderNameAndConverter(Field field) {
+    field.setAccessible(true);
+    ExcelField excelField = field.getAnnotation(ExcelField.class);
+    // 如果 convertClass 未指定，则根据字段类型获取对应的默认转换器
+    Class<? extends IConverter> convertClass = excelField.convert();
+    if (NotSpecifyConverter.class.equals(convertClass)) {
+      convertClass = ConverterFactory.get(field.getType());
+    }
+    final IConverter<Object, String> convert = ConvertHelper.getConvert(convertClass);
+    final String columnName = excelField.columnName();
+    final String name = StringUtils.isEmpty(columnName) ? field.getName() : columnName;
+    return new Pair<>(name, convert);
   }
 
   /**
@@ -136,7 +151,6 @@ public class ExcelBeanHelper {
       throw new ExcelException(e);
     }
   }
-
 
   public static void fieldSetValue(Field field, Object target, Object value) {
     try {

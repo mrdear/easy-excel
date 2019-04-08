@@ -1,7 +1,7 @@
 package io.github.mrdear.excel.annotation;
 
-import io.github.mrdear.excel.domain.convert.DefaultConverter;
 import io.github.mrdear.excel.domain.convert.IConverter;
+import io.github.mrdear.excel.domain.convert.NotSpecifyConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,5 +23,5 @@ public @interface ExcelField {
   /**
    * 写入时所采取的转换器
    */
-  Class<? extends IConverter> convert() default DefaultConverter.class;
+  Class<? extends IConverter> convert() default NotSpecifyConverter.class;
 }
