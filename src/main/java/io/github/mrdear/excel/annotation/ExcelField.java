@@ -24,4 +24,9 @@ public @interface ExcelField {
    * 写入时所采取的转换器
    */
   Class<? extends IConverter> convert() default NotSpecifyConverter.class;
+
+  /**
+   * 表格的列排序，默认全部为 0（不排序）
+   */
+  int sort() default 0;
 }

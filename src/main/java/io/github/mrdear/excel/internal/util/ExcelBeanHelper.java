@@ -69,6 +69,7 @@ public class ExcelBeanHelper {
         .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
+        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).sort()))
         .map(x -> {
           final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
           return new Pair<>(x.getName(), ExcelWriterHeader.create(pair.getKey(), pair.getValue()));
@@ -89,6 +90,7 @@ public class ExcelBeanHelper {
         .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
+        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).sort()))
         .map(x -> {
           final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
           return new Pair<>(pair.getKey(), ExcelReadHeader.create(x, pair.getValue()));
