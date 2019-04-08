@@ -10,6 +10,7 @@ public interface ExcelWriter {
 
   /**
    * 导出该表,此方法可以多次执行,每一次执行都是一张新表
+   *
    * @param context 该表所需要的上下文信息
    * @return ExcelWriter
    */
@@ -19,5 +20,4 @@ public interface ExcelWriter {
    * 终结操作,写入对应的输出流汇总
    */
   void write();
-
 }

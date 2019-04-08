@@ -3,7 +3,6 @@ package io.github.mrdear.excel.writer;
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.model.UserWithAnnotation;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -18,11 +17,12 @@ import java.util.UUID;
  * @since 2018/6/29
  */
 public class CustomExcelExportExample1Test {
+  private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
 
   @Test
   public void testCustom() {
     List<UserWithAnnotation> users = mockUserWithAnnotation(5);
-    EasyExcel.export("/tmp/test.xlsx")
+    EasyExcel.export(currentPath + "/test.xlsx")
         .export(ExcelWriteContext.builder()
             .datasource(users)
             .sheetName("user1")
@@ -45,7 +45,7 @@ public class CustomExcelExportExample1Test {
     List<UserWithAnnotation> result = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       UserWithAnnotation user =
-          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(),"ignore nickname", null);
+          new UserWithAnnotation("张三" + i, UUID.randomUUID().toString(), "ignore nickname", null);
       result.add(user);
     }
     return result;

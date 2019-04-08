@@ -5,23 +5,14 @@ import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
-import io.github.mrdear.excel.internal.restrain.DefaultHeaderConvert;
-
-import org.apache.commons.lang3.math.NumberUtils;
+import io.github.mrdear.excel.domain.convert.ConverterFactory;
+import io.github.mrdear.excel.domain.convert.IConverter;
+import io.github.mrdear.excel.domain.convert.NotSpecifyConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 
-
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -72,21 +63,15 @@ public class ExcelBeanHelper {
               Map::putAll);
     }
     // 为bean情况 获取到所有字段
-    final Field[] fields = bean.getClass().getDeclaredFields();
-
-    return Arrays.stream(fields)
-        // 过滤掉内置字段
-        .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
+    return SuperClassUtil.getAllDeclaredField(bean.getClass()).stream()
+        // 过滤掉没有使用 ExcelField 注解指定的字段
+        .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
+        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).order()))
         .map(x -> {
-          x.setAccessible(true);
-          ExcelField annotation = x.getAnnotation(ExcelField.class);
-          if (null != annotation) {
-            return new Pair<>(x.getName(), ExcelWriterHeader.create(annotation.columnName(),
-                ConvertHelper.getConvert(annotation.writerConvert())));
-          }
-          return new Pair<>(x.getName(), ExcelWriterHeader.create(x.getName()));
+          final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
+          return new Pair<>(x.getName(), ExcelWriterHeader.create(pair.getKey(), pair.getValue()));
         })
         .collect(LinkedHashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
   }
@@ -96,26 +81,40 @@ public class ExcelBeanHelper {
    *
    * @param clazz 实体类型
    * @param <T>   试题类型
-   * @param convert header转换器
    * @return 读操作header, key columnName value ExcelReadHeader
    */
-  public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz,
-      Function<Field,Pair<String,ExcelReadHeader>> convert) {
-    Field[] fields = clazz.getDeclaredFields();
-    return Arrays.stream(fields)
-        .filter(x -> !Objects.equals(x.getName(), "this$0") && !Objects.equals(x.getName(), "serialVersionUID"))
+  public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz) {
+    return SuperClassUtil.getAllDeclaredField(clazz).stream()
+        // 过滤掉没有使用 ExcelField 注解指定的字段
+        .filter(x -> x.getAnnotation(ExcelField.class) != null)
         // 过滤掉指定忽略的字段
         .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
+        .sorted(Comparator.comparing(x -> x.getAnnotation(ExcelField.class).order()))
         .map(x -> {
-          x.setAccessible(true);
-          // 走默认规则
-          if (null == convert) {
-            DefaultHeaderConvert defaultConvert = ConvertHelper.getConvert(DefaultHeaderConvert.class);
-            return defaultConvert.apply(x);
-          }
-          return convert.apply(x);
+          final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
+          return new Pair<>(pair.getKey(), ExcelReadHeader.create(x, pair.getValue()));
         })
         .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
+  }
+
+  /**
+   * 从字段中获取到对应的表头名字与转换器
+   *
+   * @param field 字段
+   * @return 使用 {@link Pair} 封装的两个字段
+   */
+  private static Pair<String, ? extends IConverter> castHeaderNameAndConverter(Field field) {
+    field.setAccessible(true);
+    ExcelField excelField = field.getAnnotation(ExcelField.class);
+    // 如果 convertClass 未指定，则根据字段类型获取对应的默认转换器
+    Class<? extends IConverter> convertClass = excelField.convert();
+    if (NotSpecifyConverter.class.equals(convertClass)) {
+      convertClass = ConverterFactory.get(field.getType());
+    }
+    final IConverter<?> convert = ConvertHelper.getConvert(convertClass);
+    final String columnName = excelField.columnName();
+    final String name = StringUtils.isEmpty(columnName) ? field.getName() : columnName;
+    return new Pair<>(name, convert);
   }
 
   /**
@@ -128,15 +127,7 @@ public class ExcelBeanHelper {
     if (null == value) {
       return;
     }
-
-    if (value instanceof Date) {
-      cell.setCellValue((Date) value);
-    } else if (value instanceof Calendar) {
-      cell.setCellValue((Calendar) value);
-    } else {
-      cell.setCellValue(String.valueOf(value));
-    }
-
+    cell.setCellValue(String.valueOf(value));
   }
 
   /**
@@ -154,34 +145,14 @@ public class ExcelBeanHelper {
     }
   }
 
-
   public static void fieldSetValue(Field field, Object target, Object value) {
     try {
       field.setAccessible(true);
-      Class<?> fieldType = field.getType();
+      // 如果字段值为空则不进行设置
       if (value == null) {
         return;
       }
-      if (fieldType.equals(Long.class) || fieldType.equals(long.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.longValue());
-      } else if (fieldType.equals(Integer.class) || fieldType.equals(int.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.intValue());
-      } else if (fieldType.equals(Short.class) || fieldType.equals(short.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.shortValue());
-      } else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
-        field.set(target, Boolean.valueOf(String.valueOf(value)));
-      } else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue);
-      } else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
-        Double doubleValue = NumberUtils.toDouble(String.valueOf(value));
-        field.set(target, doubleValue.floatValue());
-      } else {
-        field.set(target, value);
-      }
+      field.set(target, value);
     } catch (IllegalAccessException e) {
       throw new ExcelException(e);
     }
@@ -193,10 +164,6 @@ public class ExcelBeanHelper {
       case FORMULA:
       case BLANK:
         return cell.getStringCellValue();
-      case BOOLEAN:
-        return Boolean.toString(cell.getBooleanCellValue());
-      case NUMERIC:
-        return Double.toString(cell.getNumericCellValue());
       case _NONE:
       case ERROR:
       default:

@@ -1,9 +1,8 @@
 package io.github.mrdear.excel.domain;
 
+import io.github.mrdear.excel.internal.util.Assert;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.Sheet;
-
-import io.github.mrdear.excel.internal.util.Assert;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -39,6 +38,7 @@ public class ExcelWriteContextBuilder {
 
   /**
    * 指定excel的header
+   *
    * @param headers key field name  value ExcelWriterHeader
    * @return this
    */
@@ -47,10 +47,22 @@ public class ExcelWriteContextBuilder {
     return this;
   }
 
+  /**
+   * 指定标记为错误的单元格的错误列表
+   *
+   * @param errors 错误列表
+   * @return this
+   */
+  public ExcelWriteContextBuilder errors(List<ExcelImportError> errors) {
+    this.context.setErrors(errors);
+    return this;
+  }
+
   public ExcelWriteContextBuilder createSheetHook(BiConsumer<Sheet, ExcelWriteContext> createSheetHook) {
     this.context.setCreateSheetHook(createSheetHook);
     return this;
   }
+
 
   public ExcelWriteContextBuilder startRow(int startRow) {
     this.context.setStartRow(startRow);
@@ -77,5 +89,4 @@ public class ExcelWriteContextBuilder {
     Assert.notNull(context.getDatasource(), "datasource can't be null");
     Assert.notNull(context.getHeaders(), "headers can't be null");
   }
-
 }

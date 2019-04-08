@@ -1,23 +1,21 @@
 package io.github.mrdear.excel.write;
 
 import io.github.mrdear.excel.ExcelException;
+import io.github.mrdear.excel.domain.ExcelImportError;
 import io.github.mrdear.excel.domain.ExcelType;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
 import io.github.mrdear.excel.internal.util.Assert;
 import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,13 +25,11 @@ import java.util.Map;
 public class DefaultExcelWriter implements ExcelWriter {
 
   private static Logger logger = LoggerFactory.getLogger(DefaultExcelWriter.class);
-
+  private final ExcelType excelType;
   /**
    * 工作簿
    */
   private Workbook workbook;
-
-  private final ExcelType excelType;
   /**
    * 输出目标
    */
@@ -81,15 +77,36 @@ public class DefaultExcelWriter implements ExcelWriter {
       headers.forEach((k, v) -> {
         Cell cell = row.createCell(tempCol[0]++);
         Object value = rowData.get(k);
-        ExcelBeanHelper.autoFitCell(cell, v.getConvert().apply(value));
+        ExcelBeanHelper.autoFitCell(cell, value == null ? null : v.getConvert().to(value));
       });
     }
 
+    // 写错误数据
+    final List<ExcelImportError> errors = context.getErrors();
+    errors.forEach(error -> {
+      final Cell cell = sheet.getRow(error.getRow()).getCell(error.getCol());
+      final CellStyle style = getErrorCellStyle();
+      cell.setCellValue(error.getVal());
+      cell.setCellStyle(style);
+    });
     return this;
   }
 
   /**
+   * 获取错误样式
+   */
+  private CellStyle getErrorCellStyle() {
+    final CellStyle style = workbook.createCellStyle();
+    style.setFillForegroundColor(IndexedColors.RED1.getIndex());
+    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+    style.setFillBackgroundColor(IndexedColors.RED1.getIndex());
+    style.setFillPattern(FillPatternType.BIG_SPOTS);
+    return style;
+  }
+
+  /**
    * 创建工作本
+   *
    * @param context 一张sheet上下文
    */
   private void createWorkbookIfNull(ExcelWriteContext context) {

@@ -1,7 +1,9 @@
 package io.github.mrdear.excel.domain;
 
+import io.github.mrdear.excel.domain.convert.DefaultConverter;
+import io.github.mrdear.excel.domain.convert.IConverter;
+
 import java.lang.reflect.Field;
-import java.util.function.Function;
 
 /**
  * @author Quding Ding
@@ -17,26 +19,26 @@ public class ExcelReadHeader {
   /**
    * 对应转换器
    */
-  private Function<String, ?> convert;
+  private IConverter<?> convert;
 
-  private ExcelReadHeader(Field field, Function<String, ?> convert) {
+  private ExcelReadHeader(Field field, IConverter<?> convert) {
     this.field = field;
     this.convert = convert;
   }
 
-  public static ExcelReadHeader create(Field field, Function<String, ?> convert) {
+  public static ExcelReadHeader create(Field field, IConverter<?> convert) {
     return new ExcelReadHeader(field, convert);
   }
 
   public static ExcelReadHeader create(Field field) {
-    return new ExcelReadHeader(field, Function.identity());
+    return new ExcelReadHeader(field, new DefaultConverter());
   }
 
   public Field getField() {
     return field;
   }
 
-  public Function<String, ?> getConvert() {
+  public IConverter<?> getConvert() {
     return convert;
   }
 }

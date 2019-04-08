@@ -5,7 +5,6 @@ import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.model.Id;
 import io.github.mrdear.excel.model.User;
 import io.github.mrdear.excel.model.UserWithAnnotation;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +26,8 @@ public class SimpleExcelReaderTest {
     try (ExcelReader reader = EasyExcel.read(inputStream)) {
       List<User> result = reader.resolve(ExcelReadContext.<User>builder()
           .clazz(User.class)
-          .build());
+          .build())
+          .getData();
 
       Assert.assertEquals(result.size(), 5);
       Assert.assertEquals(result.get(0).getPasswd(), "9277656f-b228-4d53-a35b-b6cffc26fc9e");
@@ -45,7 +45,8 @@ public class SimpleExcelReaderTest {
 
     List<User> result = reader.resolve(ExcelReadContext.<User>builder()
         .clazz(User.class)
-        .build());
+        .build())
+        .getData();
     Assert.assertEquals(result.size(), 0);
   }
 
@@ -58,7 +59,8 @@ public class SimpleExcelReaderTest {
 
     List<UserWithAnnotation> result = reader.resolve(ExcelReadContext.<UserWithAnnotation>builder()
         .clazz(UserWithAnnotation.class)
-        .build());
+        .build())
+        .getData();
 
     Assert.assertEquals(result.size(), 5);
     Assert.assertEquals(result.get(0).getPasswd(), "0b6df627-5975-417b-abc9-1f2bad5ca1e2");
@@ -76,7 +78,8 @@ public class SimpleExcelReaderTest {
 
     List<Id> result = reader.resolve(ExcelReadContext.<Id>builder()
         .clazz(Id.class)
-        .build());
+        .build())
+        .getData();
 
     Assert.assertEquals(1332, result.size());
     Assert.assertTrue(!result.isEmpty());

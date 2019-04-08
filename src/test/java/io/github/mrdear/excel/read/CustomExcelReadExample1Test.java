@@ -3,10 +3,8 @@ package io.github.mrdear.excel.read;
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.model.UserWithAnnotation;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -16,7 +14,6 @@ import java.util.List;
  * @author Quding Ding
  * @since 2018/6/29
  */
-@Ignore
 public class CustomExcelReadExample1Test {
 
   @Test
@@ -33,7 +30,8 @@ public class CustomExcelReadExample1Test {
           Row row = sheet.getRow(0);
           Assert.assertEquals(row.getCell(0).getStringCellValue(), "custom header");
         })
-        .build());
+        .build())
+        .getData();
 
     Assert.assertEquals(sheet1Result.size(), 5);
     Assert.assertEquals(sheet1Result.get(1).getUsername(), "张三1");
@@ -42,7 +40,8 @@ public class CustomExcelReadExample1Test {
     List<UserWithAnnotation> sheet2Result = reader.resolve(ExcelReadContext.<UserWithAnnotation>builder()
         .clazz(UserWithAnnotation.class)
         .sheetIndex(1)
-        .build());
+        .build())
+        .getData();
 
     Assert.assertEquals(sheet2Result.size(), 5);
     Assert.assertEquals(sheet2Result.get(1).getUsername(), "张三1");
