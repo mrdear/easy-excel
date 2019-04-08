@@ -20,7 +20,7 @@ class SuperClassUtilTest {
         .filter(x -> !StringUtils.endsWith(x.getName(), "this$0"))
         .collect(Collectors.toSet());
     assertThat(fieldSet)
-        .hasSize(2);
+        .hasSize(3);
     final Set<String> set = fieldSet.stream()
         .map(Field::getName)
         .collect(Collectors.toSet());
