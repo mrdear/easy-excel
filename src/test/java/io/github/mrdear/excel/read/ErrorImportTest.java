@@ -1,5 +1,7 @@
 package io.github.mrdear.excel.read;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.domain.ExcelImportError;
@@ -7,6 +9,7 @@ import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ImportDomain;
 import io.github.mrdear.excel.writer.DateFieldTest;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -21,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author rxliuli
@@ -69,12 +70,11 @@ public class ErrorImportTest {
     assertThat(data)
         .hasSize(count);
     assertThat(errorList)
-        .hasSize(3);
+        .hasSize(0);
 
     EasyExcel.export(fileName)
         .export(ExcelWriteContext.builder()
             .datasource(data)
-            .errors(errorList)
             .build()
         )
         .write();

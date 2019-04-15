@@ -4,12 +4,15 @@
 
 
 ## maven
+
+**注意: 0.1.0版本与之前的并不相兼容**
+
 ```xml
 
 <dependency>
   <groupId>io.github.mrdear</groupId>
   <artifactId>excel</artifactId>
-  <version>0.0.7</version>
+  <version>0.1.0</version>
 </dependency>
 
 ```
@@ -37,9 +40,7 @@ public class UserWithAnnotation {
   @ExcelField(columnName = "用户密码")
   private String passwd;
 
-  @ExcelField(columnName = "登录日期",
-      writerConvert = DateToStringConvert.class,
-      readerConvert = StringToDateConvert.class)
+  @ExcelField(columnName = "登录日期", convert = DateConverter.class)
   private Date date;
 }
 ```
