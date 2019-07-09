@@ -5,7 +5,9 @@ import io.github.mrdear.excel.domain.ExcelImportError;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelReadHeader;
 import io.github.mrdear.excel.domain.ImportDomain;
-import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
+import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
+import io.github.mrdear.excel.internal.util.PoiUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -63,12 +65,12 @@ public class DefaultExcelReader implements ExcelReader {
     // 依次解析每一行
     for (; startRow <= lastRowNum; startRow++) {
       Row row = sheet.getRow(startRow);
-      T instance = ExcelBeanHelper.newInstance(context.getClazz());
+      T instance = ExcelBeanUtils.newInstance(context.getClazz());
       final int i = startRow;
       row.cellIterator().forEachRemaining(x -> {
-        final int columnIndex = x.getColumnIndex();
-        final ExcelReadHeader tempHeader = configHeaders.get(realHeaders.get(columnIndex));
-        final String columnValue = ExcelBeanHelper.getColumnValue(x);
+        int columnIndex = x.getColumnIndex();
+        ExcelReadHeader tempHeader = configHeaders.get(realHeaders.get(columnIndex));
+        String columnValue = PoiUtils.getColumnValue(x);
         // 如果字段值为空字符串则直接跳过
         if (null == tempHeader || StringUtils.isEmpty(columnValue)) {
           return;
@@ -80,7 +82,7 @@ public class DefaultExcelReader implements ExcelReader {
           // 如果解析错误则记录下来
           errorList.add(new ExcelImportError(i, columnIndex, tempHeader.getField().getName(), columnValue, e));
         }
-        ExcelBeanHelper.fieldSetValue(tempHeader.getField(), instance, value);
+        ExcelBeanUtils.fieldSetValue(tempHeader.getField(), instance, value);
       });
 
       resultContainer.add(instance);

@@ -1,10 +1,10 @@
 package io.github.mrdear.excel.domain.convert;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author rxliuli
@@ -13,7 +13,7 @@ class ConverterFactoryTest {
 
   @Test
   void get() throws IllegalAccessException, InstantiationException {
-    final IConverter<Boolean> converter = ConverterFactory.get(boolean.class).newInstance();
+    final IConverter<Boolean> converter = ConverterFactory.get(boolean.class);
     assertThat(converter.to(true))
         .isEqualTo("true");
     assertThat(converter.to(false))
@@ -26,10 +26,12 @@ class ConverterFactoryTest {
 
   @Test
   void register() {
-    ConverterFactory.register(Date.class, DemoConverter.class);
-    final Class<? extends IConverter<Date>> clazz = ConverterFactory.get(Date.class);
+    DemoConverter converter = new DemoConverter();
+    ConverterFactory.register(Date.class, converter);
+
+    IConverter<Date> clazz = ConverterFactory.get(Date.class);
     assertThat(clazz)
-        .isEqualTo(DemoConverter.class);
+        .isEqualTo(converter);
   }
 
   static class DemoConverter implements IConverter<Date> {

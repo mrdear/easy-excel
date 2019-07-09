@@ -1,11 +1,15 @@
 package io.github.mrdear.excel.writer;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
+import io.github.mrdear.excel.annotation.ExcelIgnore;
 import io.github.mrdear.excel.domain.ExcelReadContext;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ImportDomain;
 import io.github.mrdear.excel.read.ExcelReader;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -15,8 +19,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 测试默认忽略的字段
@@ -63,6 +65,8 @@ class DefaultIgnoreNotSetExcelFieldTest {
     private String name;
     @ExcelField(columnName = "年龄")
     private Integer age;
+
+    @ExcelIgnore
     private Boolean sex;
 
     public User() {

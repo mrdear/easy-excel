@@ -1,6 +1,6 @@
 package io.github.mrdear.excel.domain;
 
-import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
+import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class ExcelWriteContext {
       this.datasource = Collections.emptyList();
       return this;
     }
-    this.datasource = ExcelBeanHelper.beanToMap(datasource);
+    this.datasource = ExcelBeanUtils.beanToMap(datasource);
     return this;
   }
 
@@ -80,7 +80,7 @@ public class ExcelWriteContext {
               (l, v) -> l.put(v, ExcelWriterHeader.create(v)),
               Map::putAll);
     } else {
-      this.headers = ExcelBeanHelper.beanToWriterHeaders(bean);
+      this.headers = ExcelBeanUtils.beanToWriterHeaders(bean);
     }
     return this;
   }

@@ -11,7 +11,7 @@ public class DateToStringConvertTest {
   @Test
   public void apply() throws ParseException {
     Date now = new Date();
-    DateConverter convert = new DateConverter();
+    YmdDateConverter convert = new YmdDateConverter();
 
     String apply = convert.to(now);
     Date parse = convert.from(apply);

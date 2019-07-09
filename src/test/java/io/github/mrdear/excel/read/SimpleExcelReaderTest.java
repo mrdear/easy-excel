@@ -82,7 +82,7 @@ public class SimpleExcelReaderTest {
         .getData();
 
     Assert.assertEquals(1332, result.size());
-    Assert.assertTrue(!result.isEmpty());
+    Assert.assertFalse(result.isEmpty());
     reader.close();
   }
 

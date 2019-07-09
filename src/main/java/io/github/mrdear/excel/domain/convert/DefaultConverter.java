@@ -8,7 +8,14 @@ import java.util.Objects;
  * @author rxliuli
  */
 public class DefaultConverter implements IConverter<Object> {
-  @Override
+
+    private static final DefaultConverter INSTANCE = new DefaultConverter();
+
+    public static IConverter<?> getInstance() {
+        return INSTANCE;
+    }
+
+    @Override
   public String to(Object o) {
     return Objects.toString(o);
   }

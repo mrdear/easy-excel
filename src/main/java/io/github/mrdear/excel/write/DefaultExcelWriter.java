@@ -6,7 +6,7 @@ import io.github.mrdear.excel.domain.ExcelType;
 import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.ExcelWriterHeader;
 import io.github.mrdear.excel.internal.util.Assert;
-import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
+import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class DefaultExcelWriter implements ExcelWriter {
       headers.forEach((k, v) -> {
         Cell cell = row.createCell(tempCol[0]++);
         Object value = rowData.get(k);
-        ExcelBeanHelper.autoFitCell(cell, value == null ? null : v.getConvert().to(value));
+        ExcelBeanUtils.autoFitCell(cell, value == null ? null : v.getConvert().to(value));
       });
     }
 

@@ -1,5 +1,7 @@
 package io.github.mrdear.excel.read;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.domain.ExcelReadContext;
@@ -7,8 +9,13 @@ import io.github.mrdear.excel.domain.ExcelWriteContext;
 import io.github.mrdear.excel.domain.convert.ConverterFactory;
 import io.github.mrdear.excel.domain.convert.IConverter;
 import io.github.mrdear.excel.writer.DateFieldTest;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,7 +28,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author rxliuli
@@ -41,7 +47,7 @@ class CustomConverterTest {
   @BeforeEach
   void before() {
     // 全局注册指定类型的转换器
-    ConverterFactory.register(LocalTime.class, CustomLocalTimeConverter.class);
+    ConverterFactory.register(LocalTime.class, new CustomLocalTimeConverter());
   }
 
   @Test
@@ -64,9 +70,7 @@ class CustomConverterTest {
           .clazz(Person.class)
           .build())
           .getData();
-      System.out.println(join(result));
-      assertThat(result)
-          .hasSize(count);
+      assertThat(result).hasSize(count);
     }
   }
 

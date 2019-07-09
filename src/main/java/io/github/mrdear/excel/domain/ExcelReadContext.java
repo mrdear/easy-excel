@@ -1,6 +1,6 @@
 package io.github.mrdear.excel.domain;
 
-import io.github.mrdear.excel.internal.util.ExcelBeanHelper;
+import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Map;
@@ -95,7 +95,7 @@ public class ExcelReadContext<T> {
 
   ExcelReadContext<T> setHeaders(Class<T> clazz) {
     // 使用默认Header转换器
-    this.headers = ExcelBeanHelper.beanToReaderHeaders(clazz);
+    this.headers = ExcelBeanUtils.beanToReaderHeaders(clazz);
     return this;
   }
 }

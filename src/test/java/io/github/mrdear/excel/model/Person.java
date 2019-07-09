@@ -1,7 +1,7 @@
 package io.github.mrdear.excel.model;
 
 import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.domain.convert.DateConverter;
+import io.github.mrdear.excel.domain.convert.YmdDateConverter;
 import io.github.mrdear.excel.domain.convert.LocalDateConverter;
 import io.github.mrdear.excel.domain.convert.LocalDateTimeConverter;
 import io.github.mrdear.excel.domain.convert.LocalTimeConverter;
@@ -20,7 +20,7 @@ public class Person {
   private String username;
   @ExcelField(columnName = "生日", convert = LocalDateTimeConverter.class)
   private LocalDateTime birthday;
-  @ExcelField(columnName = "日期", convert = DateConverter.class)
+  @ExcelField(columnName = "日期", convert = YmdDateConverter.class)
   private Date date;
   @ExcelField(columnName = "本地日期", convert = LocalDateConverter.class)
   private LocalDate localDate;

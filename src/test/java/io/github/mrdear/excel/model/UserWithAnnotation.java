@@ -2,7 +2,7 @@ package io.github.mrdear.excel.model;
 
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.annotation.ExcelIgnore;
-import io.github.mrdear.excel.domain.convert.DateConverter;
+import io.github.mrdear.excel.domain.convert.YmdDateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +27,6 @@ public class UserWithAnnotation {
   @ExcelIgnore
   private String nickName;
 
-  @ExcelField(columnName = "登录日期", convert = DateConverter.class)
+  @ExcelField(columnName = "登录日期", convert = YmdDateConverter.class)
   private Date date;
 }
