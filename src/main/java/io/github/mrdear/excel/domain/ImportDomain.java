@@ -12,17 +12,12 @@ public class ImportDomain<T> {
    * 数据列表
    */
   private List<T> data;
-  /**
-   * 错误列表
-   */
-  private List<ExcelImportError> errors;
 
   public ImportDomain() {
   }
 
-  public ImportDomain(List<T> data, List<ExcelImportError> errors) {
+  public ImportDomain(List<T> data) {
     this.data = data;
-    this.errors = errors;
   }
 
   public List<T> getData() {
@@ -34,12 +29,4 @@ public class ImportDomain<T> {
     return this;
   }
 
-  public List<ExcelImportError> getErrors() {
-    return errors;
-  }
-
-  public ImportDomain<T> setErrors(List<ExcelImportError> errors) {
-    this.errors = errors;
-    return this;
-  }
 }

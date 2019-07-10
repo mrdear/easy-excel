@@ -11,6 +11,9 @@ public class LongConverter implements IConverter<Long> {
 
   @Override
   public Long from(String s) {
+    if (s.endsWith(".0")) {
+      return Double.valueOf(s).longValue();
+    }
     return Long.valueOf(s);
   }
 }

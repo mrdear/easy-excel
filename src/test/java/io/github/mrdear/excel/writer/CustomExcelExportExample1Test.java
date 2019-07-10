@@ -1,7 +1,7 @@
 package io.github.mrdear.excel.writer;
 
 import io.github.mrdear.excel.EasyExcel;
-import io.github.mrdear.excel.domain.ExcelWriteContext;
+import io.github.mrdear.excel.write.ExcelWriteContext;
 import io.github.mrdear.excel.model.UserWithAnnotation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,7 +17,7 @@ import java.util.UUID;
  * @since 2018/6/29
  */
 public class CustomExcelExportExample1Test {
-  private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
+  private final String currentPath = CustomExcelExportExample1Test.class.getClassLoader().getResource(".").getPath();
 
   @Test
   public void testCustom() {

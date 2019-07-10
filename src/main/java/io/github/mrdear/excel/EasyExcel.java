@@ -1,12 +1,14 @@
 package io.github.mrdear.excel;
 
-import io.github.mrdear.excel.domain.ExcelType;
-import io.github.mrdear.excel.read.DefaultExcelReader;
-import io.github.mrdear.excel.read.ExcelReader;
+import io.github.mrdear.excel.read.DocReader;
 import io.github.mrdear.excel.write.DefaultExcelWriter;
 import io.github.mrdear.excel.write.ExcelWriter;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * 整个操作的入口类
@@ -22,7 +24,7 @@ public class EasyExcel {
    *
    * @return ExcelWriter
    */
-  public static ExcelWriter export(ExcelType type, String fullFileName) {
+  public static ExcelWriter export(DocType type, String fullFileName) {
     try {
       return new DefaultExcelWriter(type, new FileOutputStream(fullFileName));
     } catch (FileNotFoundException e) {
@@ -38,7 +40,7 @@ public class EasyExcel {
    */
   public static ExcelWriter export(String fullFileName) {
     try {
-      return new DefaultExcelWriter(ExcelType.XLSX, new FileOutputStream(fullFileName));
+      return new DefaultExcelWriter(DocType.XLSX, new FileOutputStream(fullFileName));
     } catch (FileNotFoundException e) {
       throw new ExcelException(e);
     }
@@ -50,7 +52,7 @@ public class EasyExcel {
    * @param outputStream 输出流
    * @return ExcelWriter
    */
-  public static ExcelWriter export(ExcelType type, OutputStream outputStream) {
+  public static ExcelWriter export(DocType type, OutputStream outputStream) {
     return new DefaultExcelWriter(type, outputStream);
   }
 
@@ -61,7 +63,7 @@ public class EasyExcel {
    * @return ExcelWriter
    */
   public static ExcelWriter export(OutputStream outputStream) {
-    return new DefaultExcelWriter(ExcelType.XLSX, outputStream);
+    return new DefaultExcelWriter(DocType.XLSX, outputStream);
   }
 
   /**
@@ -70,8 +72,8 @@ public class EasyExcel {
    * @param inputStream 输入流
    * @return 读取服务
    */
-  public static ExcelReader read(InputStream inputStream) {
-    return new DefaultExcelReader(inputStream);
+  public static DocReader read(InputStream inputStream, DocType docType) {
+    return docType.createReader(inputStream);
   }
 
   /**
@@ -80,13 +82,18 @@ public class EasyExcel {
    * @param fullFilePath 文件全路径名
    * @return 读取服务
    */
-  public static ExcelReader read(String fullFilePath) {
+  public static DocReader read(String fullFilePath) {
     FileInputStream inputStream;
     try {
       inputStream = new FileInputStream(fullFilePath);
     } catch (FileNotFoundException e) {
       throw new ExcelException(e);
     }
-    return new DefaultExcelReader(inputStream);
+    int index = fullFilePath.lastIndexOf('.');
+    DocType docType = DocType.autoSelectBySuffix(fullFilePath.substring(index));
+
+    return docType.createReader(inputStream);
   }
+
+
 }

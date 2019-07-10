@@ -1,10 +1,14 @@
 package io.github.mrdear.excel.writer;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.mrdear.excel.DocType;
 import io.github.mrdear.excel.EasyExcel;
 import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.domain.ExcelReadContext;
-import io.github.mrdear.excel.domain.ExcelWriteContext;
-import io.github.mrdear.excel.read.ExcelReader;
+import io.github.mrdear.excel.write.ExcelWriteContext;
+import io.github.mrdear.excel.read.DocReader;
+import io.github.mrdear.excel.read.ReadContextBuilder;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -12,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
@@ -21,14 +24,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
  * @author rxliuli
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DefaultUseConverterTest {
-  private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
+  private final String currentPath = DefaultUseConverterTest.class.getClassLoader().getResource(".").getPath();
   private final int count = 5;
   private String fileName = currentPath + "/DefaultUseConverterTest.xlsx";
 
@@ -53,15 +54,15 @@ class DefaultUseConverterTest {
   @Test
   @Order(2)
   void importDateList() {
-    try (ExcelReader reader = EasyExcel.read(new FileInputStream(fileName))) {
-      List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
+    try (DocReader reader = EasyExcel.read(new FileInputStream(fileName), DocType.XLSX)) {
+      List<Person> result = reader.resolve(ReadContextBuilder.<Person>builder()
           .clazz(Person.class)
-          .build())
+          .buildForExcel())
           .getData();
       System.out.println(join(result));
       assertThat(result)
           .hasSize(count);
-    } catch (FileNotFoundException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

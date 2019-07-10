@@ -1,6 +1,6 @@
 package io.github.mrdear.excel.domain.convert;
 
-import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
+import io.github.mrdear.excel.internal.util.DocBeanUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -88,7 +88,7 @@ public class ConverterFactory {
             }
         }
         if (isConverter) {
-            T t = ExcelBeanUtils.newInstance(clazz);
+            T t = DocBeanUtils.newInstance(clazz);
             CONVERT_MAP.putIfAbsent(clazz, (IConverter<?>) t);
             return (IConverter<T>) CONVERT_MAP.get(clazz);
         }

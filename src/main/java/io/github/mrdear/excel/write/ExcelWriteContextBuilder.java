@@ -1,6 +1,8 @@
-package io.github.mrdear.excel.domain;
+package io.github.mrdear.excel.write;
 
+import io.github.mrdear.excel.domain.ExcelImportError;
 import io.github.mrdear.excel.internal.util.Assert;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -39,10 +41,10 @@ public class ExcelWriteContextBuilder {
   /**
    * 指定excel的header
    *
-   * @param headers key field name  value ExcelWriterHeader
+   * @param headers key field name  value WriterHeader
    * @return this
    */
-  public ExcelWriteContextBuilder headers(LinkedHashMap<String, ExcelWriterHeader> headers) {
+  public ExcelWriteContextBuilder headers(LinkedHashMap<String, WriterHeader> headers) {
     this.context.setHeaders(headers);
     return this;
   }

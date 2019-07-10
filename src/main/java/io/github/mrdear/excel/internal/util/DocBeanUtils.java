@@ -3,8 +3,8 @@ package io.github.mrdear.excel.internal.util;
 import io.github.mrdear.excel.ExcelException;
 import io.github.mrdear.excel.annotation.ExcelField;
 import io.github.mrdear.excel.annotation.ExcelIgnore;
-import io.github.mrdear.excel.domain.ExcelReadHeader;
-import io.github.mrdear.excel.domain.ExcelWriterHeader;
+import io.github.mrdear.excel.read.ReadHeader;
+import io.github.mrdear.excel.write.WriterHeader;
 import io.github.mrdear.excel.domain.convert.ConverterFactory;
 import io.github.mrdear.excel.domain.convert.IConverter;
 import io.github.mrdear.excel.domain.convert.NotSpecifyConverter;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @author Quding Ding
  * @since 2018/6/28
  */
-public class ExcelBeanUtils {
+public class DocBeanUtils {
 
     /**
      * bean转Map函数,支持使用自定义注解
@@ -42,7 +42,7 @@ public class ExcelBeanUtils {
         }
         // 处理bean
         return bean.parallelStream()
-            .map(ExcelBeanUtils::toMap)
+            .map(DocBeanUtils::toMap)
             .collect(Collectors.toList());
     }
 
@@ -51,16 +51,16 @@ public class ExcelBeanUtils {
      *
      * @param bean 实例
      * @param <T>  bean类型,支持LinkedHashMap 与 class
-     * @return LinkedHashMap key field name  value ExcelWriterHeader
+     * @return LinkedHashMap key field name  value WriterHeader
      */
     @SuppressWarnings("unchecked")
-    public static <T> LinkedHashMap<String, ExcelWriterHeader> beanToWriterHeaders(T bean) {
+    public static <T> LinkedHashMap<String, WriterHeader> beanToWriterHeaders(T bean) {
         if (bean instanceof LinkedHashMap) {
             return ((Map<String, ?>) bean)
                 .keySet()
                 .stream()
                 .collect(LinkedHashMap::new,
-                    (l, v) -> l.put(v, ExcelWriterHeader.create(v)),
+                    (l, v) -> l.put(v, WriterHeader.create(v)),
                     Map::putAll);
         }
 
@@ -78,7 +78,7 @@ public class ExcelBeanUtils {
             }))
             .map(x -> {
                 final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
-                return new Pair<>(x.getName(), ExcelWriterHeader.create(pair.getKey(), pair.getValue()));
+                return new Pair<>(x.getName(), WriterHeader.create(pair.getKey(), pair.getValue()));
             })
             .collect(LinkedHashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
     }
@@ -88,9 +88,9 @@ public class ExcelBeanUtils {
      *
      * @param clazz 实体类型
      * @param <T>   试题类型
-     * @return 读操作header, key columnName value ExcelReadHeader
+     * @return 读操作header, key columnName value ReadHeader
      */
-    public static <T> Map<String, ExcelReadHeader> beanToReaderHeaders(Class<T> clazz) {
+    public static <T> Map<String, ReadHeader> beanToReaderHeaders(Class<T> clazz) {
         return SuperClassUtil.getAllDeclaredField(clazz).stream()
             // 过滤掉指定忽略的字段
             .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
@@ -102,7 +102,7 @@ public class ExcelBeanUtils {
             }))
             .map(x -> {
                 final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
-                return new Pair<>(pair.getKey(), ExcelReadHeader.create(x, pair.getValue()));
+                return new Pair<>(pair.getKey(), ReadHeader.create(x, pair.getValue()));
             })
             .collect(HashMap::new, (l, v) -> l.put(v.getKey(), v.getValue()), HashMap::putAll);
     }

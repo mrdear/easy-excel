@@ -1,7 +1,7 @@
 package io.github.mrdear.excel.writer;
 
 import io.github.mrdear.excel.EasyExcel;
-import io.github.mrdear.excel.domain.ExcelWriteContext;
+import io.github.mrdear.excel.write.ExcelWriteContext;
 import io.github.mrdear.excel.model.User;
 import io.github.mrdear.excel.model.UserWithAnnotation;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import java.util.*;
  * @since 2018/6/29
  */
 public class SimpleExcelExportTest {
-  private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
+  private final String currentPath = SimpleExcelExportTest.class.getClassLoader().getResource(".").getPath();
 
   @Test
   public void testSimpleExport() {

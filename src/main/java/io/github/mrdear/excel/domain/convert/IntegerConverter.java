@@ -11,6 +11,9 @@ public class IntegerConverter implements IConverter<Integer> {
 
   @Override
   public Integer from(String s) {
+    if (s.endsWith(".0")) {
+      return Double.valueOf(s).intValue();
+    }
     return Integer.valueOf(s);
   }
 }

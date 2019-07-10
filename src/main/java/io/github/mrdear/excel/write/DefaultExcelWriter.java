@@ -2,11 +2,9 @@ package io.github.mrdear.excel.write;
 
 import io.github.mrdear.excel.ExcelException;
 import io.github.mrdear.excel.domain.ExcelImportError;
-import io.github.mrdear.excel.domain.ExcelType;
-import io.github.mrdear.excel.domain.ExcelWriteContext;
-import io.github.mrdear.excel.domain.ExcelWriterHeader;
+import io.github.mrdear.excel.DocType;
 import io.github.mrdear.excel.internal.util.Assert;
-import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
+import io.github.mrdear.excel.internal.util.DocBeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -25,7 +23,7 @@ import java.util.Map;
 public class DefaultExcelWriter implements ExcelWriter {
 
   private static Logger logger = LoggerFactory.getLogger(DefaultExcelWriter.class);
-  private final ExcelType excelType;
+  private final DocType docType;
   /**
    * 工作簿
    */
@@ -35,10 +33,10 @@ public class DefaultExcelWriter implements ExcelWriter {
    */
   private OutputStream outputStream;
 
-  public DefaultExcelWriter(ExcelType excelType, OutputStream outputStream) {
-    Assert.notNull(excelType, "excelType can't be null");
+  public DefaultExcelWriter(DocType docType, OutputStream outputStream) {
+    Assert.notNull(docType, "docType can't be null");
     Assert.notNull(outputStream, "outputStream can't be null");
-    this.excelType = excelType;
+    this.docType = docType;
     this.outputStream = outputStream;
   }
 
@@ -64,7 +62,7 @@ public class DefaultExcelWriter implements ExcelWriter {
     // 写表头
     Row headerRow = sheet.createRow(startRow++);
     int[] tempCol = {0};
-    LinkedHashMap<String, ExcelWriterHeader> headers = context.getHeaders();
+    LinkedHashMap<String, WriterHeader> headers = context.getHeaders();
     headers.forEach((k, v) -> {
       Cell cell = headerRow.createCell(tempCol[0]++);
       cell.setCellValue(v.getName());
@@ -77,7 +75,7 @@ public class DefaultExcelWriter implements ExcelWriter {
       headers.forEach((k, v) -> {
         Cell cell = row.createCell(tempCol[0]++);
         Object value = rowData.get(k);
-        ExcelBeanUtils.autoFitCell(cell, value == null ? null : v.getConvert().to(value));
+        DocBeanUtils.autoFitCell(cell, value == null ? null : v.getConvert().to(value));
       });
     }
 
@@ -112,7 +110,7 @@ public class DefaultExcelWriter implements ExcelWriter {
   private void createWorkbookIfNull(ExcelWriteContext context) {
     // 不存在则创建目录
     if (null == workbook) {
-      workbook = excelType.workbook(context.getDatasource().size());
+      workbook = docType.workbook();
     }
   }
 

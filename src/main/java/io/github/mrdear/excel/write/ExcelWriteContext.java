@@ -1,6 +1,7 @@
-package io.github.mrdear.excel.domain;
+package io.github.mrdear.excel.write;
 
-import io.github.mrdear.excel.internal.util.ExcelBeanUtils;
+import io.github.mrdear.excel.domain.ExcelImportError;
+import io.github.mrdear.excel.internal.util.DocBeanUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class ExcelWriteContext {
   /**
    * excel头
    */
-  private LinkedHashMap<String, ExcelWriterHeader> headers;
+  private LinkedHashMap<String, WriterHeader> headers;
   /**
    * 创建工作目录后的hook
    */
@@ -57,11 +58,11 @@ public class ExcelWriteContext {
       this.datasource = Collections.emptyList();
       return this;
     }
-    this.datasource = ExcelBeanUtils.beanToMap(datasource);
+    this.datasource = DocBeanUtils.beanToMap(datasource);
     return this;
   }
 
-  public LinkedHashMap<String, ExcelWriterHeader> getHeaders() {
+  public LinkedHashMap<String, WriterHeader> getHeaders() {
     return headers;
   }
 
@@ -77,15 +78,15 @@ public class ExcelWriteContext {
           .keySet()
           .stream()
           .collect(LinkedHashMap::new,
-              (l, v) -> l.put(v, ExcelWriterHeader.create(v)),
+              (l, v) -> l.put(v, WriterHeader.create(v)),
               Map::putAll);
     } else {
-      this.headers = ExcelBeanUtils.beanToWriterHeaders(bean);
+      this.headers = DocBeanUtils.beanToWriterHeaders(bean);
     }
     return this;
   }
 
-  ExcelWriteContext setHeaders(LinkedHashMap<String, ExcelWriterHeader> headers) {
+  ExcelWriteContext setHeaders(LinkedHashMap<String, WriterHeader> headers) {
     this.headers = headers;
     return this;
   }
