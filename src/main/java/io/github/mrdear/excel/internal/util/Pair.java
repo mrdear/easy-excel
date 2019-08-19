@@ -44,6 +44,13 @@ public class Pair<K,V> implements Serializable {
     }
 
     /**
+     * 静态构造方法
+     */
+    public static <K,V> Pair of(K k, V v) {
+        return new Pair<>(k, v);
+    }
+
+    /**
      * <p><code>String</code> representation of this
      * <code>Pair</code>.</p>
      *

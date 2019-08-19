@@ -1,11 +1,12 @@
 package io.github.mrdear.excel.model;
 
-import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.annotation.ExcelIgnore;
-import io.github.mrdear.excel.domain.convert.DateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import io.github.mrdear.excel.annotation.DocField;
+import io.github.mrdear.excel.annotation.DocIgnore;
+import io.github.mrdear.excel.convert.YmdDateConverter;
 
 import java.util.Date;
 
@@ -18,15 +19,15 @@ import java.util.Date;
 @NoArgsConstructor
 public class UserWithAnnotation {
 
-  @ExcelField(columnName = "用户名")
+  @DocField(columnName = "用户名")
   private String username;
 
-  @ExcelField(columnName = "用户密码")
+  @DocField(columnName = "用户密码")
   private String passwd;
 
-  @ExcelIgnore
+  @DocIgnore
   private String nickName;
 
-  @ExcelField(columnName = "登录日期", convert = DateConverter.class)
+  @DocField(columnName = "登录日期", convert = YmdDateConverter.class)
   private Date date;
 }

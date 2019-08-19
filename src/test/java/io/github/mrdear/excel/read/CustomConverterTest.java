@@ -1,72 +1,71 @@
 package io.github.mrdear.excel.read;
 
-import io.github.mrdear.excel.EasyExcel;
-import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.domain.ExcelReadContext;
-import io.github.mrdear.excel.domain.ExcelWriteContext;
-import io.github.mrdear.excel.domain.convert.ConverterFactory;
-import io.github.mrdear.excel.domain.convert.IConverter;
-import io.github.mrdear.excel.writer.DateFieldTest;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.mrdear.excel.DocType;
+import io.github.mrdear.excel.EasyDoc;
+import io.github.mrdear.excel.annotation.DocField;
+import io.github.mrdear.excel.convert.ConverterFactory;
+import io.github.mrdear.excel.convert.IConverter;
+import io.github.mrdear.excel.write.WriteContextBuilder;
+import io.github.mrdear.excel.writer.SimpleExcelExportTest;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author rxliuli
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CustomConverterTest {
-  private final String currentPath = DateFieldTest.class.getClassLoader().getResource(".").getPath();
+  private final String currentPath = SimpleExcelExportTest.class.getClassLoader().getResource(".").getPath();
   private final int count = 5;
   private String fileName = currentPath + "/CustomConverterTest.xlsx";
-
-  static String join(Collection<?> collection) {
-    return collection.stream()
-        .map(ToStringBuilder::reflectionToString)
-        .collect(Collectors.joining("\n"));
-  }
 
   @BeforeEach
   void before() {
     // 全局注册指定类型的转换器
-    ConverterFactory.register(LocalTime.class, CustomLocalTimeConverter.class);
+    ConverterFactory.register(LocalTime.class, new CustomLocalTimeConverter());
   }
 
   @Test
   @Order(1)
-  void exportDateList() {
+  void exportDateList() throws IOException {
     final List<Person> users = mockUser(count);
-    EasyExcel.export(fileName)
-        .export(ExcelWriteContext.builder()
-            .datasource(users)
-            .sheetName("user")
-            .build())
-        .write();
+    EasyDoc.export(DocType.XLSX,fileName)
+        .export(WriteContextBuilder.builder()
+            .dataSource(users)
+            .buildForExcel("user"))
+        .writeAndFlush();
   }
 
   @Test
   @Order(2)
   void importDateList() throws FileNotFoundException {
-    try (ExcelReader reader = EasyExcel.read(new FileInputStream(fileName))) {
-      List<Person> result = reader.resolve(ExcelReadContext.<Person>builder()
+    try (DocReader reader = EasyDoc.read(DocType.XLSX, new FileInputStream(fileName))) {
+      List<Person> result = reader.resolve(ReadContextBuilder.<Person>builder()
           .clazz(Person.class)
-          .build())
+          .buildForExcel())
           .getData();
-      System.out.println(join(result));
-      assertThat(result)
-          .hasSize(count);
+      assertThat(result).hasSize(count);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -106,13 +105,13 @@ class CustomConverterTest {
 
 
   public static class Person {
-    @ExcelField(columnName = "姓名", order = 1)
+    @DocField(columnName = "姓名", order = 1)
     private String username;
-    @ExcelField(columnName = "日期", order = 2)
+    @DocField(columnName = "日期", order = 2)
     private Date date;
-    @ExcelField(columnName = "本地日期", order = 3, convert = CustomLocalDateConverter.class)
+    @DocField(columnName = "本地日期", order = 3, convert = CustomLocalDateConverter.class)
     private LocalDate localDate;
-    @ExcelField(columnName = "本地时间", order = 4)
+    @DocField(columnName = "本地时间", order = 4)
     private LocalTime localTime;
 
     public Person() {

@@ -2,7 +2,7 @@ package io.github.mrdear.excel.model;
 
 import lombok.Data;
 
-import io.github.mrdear.excel.annotation.ExcelField;
+import io.github.mrdear.excel.annotation.DocField;
 
 /**
  * @author Quding Ding
@@ -11,7 +11,7 @@ import io.github.mrdear.excel.annotation.ExcelField;
 @Data
 public class Id {
 
-  @ExcelField(columnName = "id")
+  @DocField(columnName = "id")
   private Long id;
 
 }

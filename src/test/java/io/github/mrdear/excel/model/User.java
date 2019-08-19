@@ -1,9 +1,10 @@
 package io.github.mrdear.excel.model;
 
-import io.github.mrdear.excel.annotation.ExcelField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import io.github.mrdear.excel.annotation.DocField;
 
 /**
  * @author Quding Ding
@@ -13,9 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-  @ExcelField
+
   private String username;
-  @ExcelField
+
+  @DocField
   private String passwd;
 
 

@@ -1,5 +1,7 @@
 package io.github.mrdear.excel;
 
+import io.github.mrdear.excel.exception.DocumentException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +20,7 @@ public class ResponseHelper {
       resp.setHeader("Content-Disposition", "attachment; filename=" + fileName);
       return resp.getOutputStream();
     } catch (IOException e) {
-      throw new ExcelException(e);
+      throw new DocumentException(e);
     }
   }
 
