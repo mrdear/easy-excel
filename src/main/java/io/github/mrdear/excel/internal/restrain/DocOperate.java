@@ -1,10 +1,12 @@
 package io.github.mrdear.excel.internal.restrain;
 
 import io.github.mrdear.excel.read.DocReader;
+import io.github.mrdear.excel.write.DocWriter;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author Quding Ding
@@ -25,7 +27,12 @@ public interface DocOperate {
    */
   DocReader createReader(InputStream in);
 
-
+  /**
+   * 创建写入数据辅助类
+   * @param stream 输出流
+   * @return 创建结果
+   */
+  DocWriter createWriter(OutputStream stream);
 
 }
 

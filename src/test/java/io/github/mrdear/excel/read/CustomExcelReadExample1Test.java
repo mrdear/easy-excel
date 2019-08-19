@@ -1,7 +1,7 @@
 package io.github.mrdear.excel.read;
 
 import io.github.mrdear.excel.DocType;
-import io.github.mrdear.excel.EasyExcel;
+import io.github.mrdear.excel.EasyDoc;
 import io.github.mrdear.excel.model.UserWithAnnotation;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
@@ -20,7 +20,7 @@ public class CustomExcelReadExample1Test {
   public void testCustomExcel() {
     InputStream inputStream = DocReaderTest.class
         .getClassLoader().getResourceAsStream("testCustomExcel.xlsx");
-    DocReader reader = EasyExcel.read(inputStream, DocType.XLSX);
+    DocReader reader = EasyDoc.read(DocType.XLSX, inputStream);
 
     List<UserWithAnnotation> sheet1Result = reader.resolve(ReadContextBuilder.<UserWithAnnotation>builder()
         .clazz(UserWithAnnotation.class)

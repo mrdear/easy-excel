@@ -1,7 +1,7 @@
 package io.github.mrdear.excel.read;
 
 import io.github.mrdear.excel.DocType;
-import io.github.mrdear.excel.EasyExcel;
+import io.github.mrdear.excel.EasyDoc;
 import io.github.mrdear.excel.model.Id;
 import io.github.mrdear.excel.model.User;
 import io.github.mrdear.excel.model.UserWithAnnotation;
@@ -24,7 +24,7 @@ public class DocReaderTest {
     InputStream inputStream = DocReaderTest.class
         .getClassLoader().getResourceAsStream("testNormalRead.xlsx");
 
-    try (DocReader reader = EasyExcel.read(inputStream, DocType.XLSX)) {
+    try (DocReader reader = EasyDoc.read(DocType.XLSX, inputStream)) {
       List<User> result = reader.resolve(ReadContextBuilder.<User>builder()
           .clazz(User.class)
           .buildForExcel())
@@ -43,7 +43,7 @@ public class DocReaderTest {
   public void testReadEmpty() {
     InputStream inputStream = DocReaderTest.class
         .getClassLoader().getResourceAsStream("testReadEmpty.xlsx");
-    DocReader reader = EasyExcel.read(inputStream, DocType.XLSX);
+    DocReader reader = EasyDoc.read(DocType.XLSX, inputStream);
 
     List<User> result = reader.resolve(ReadContextBuilder.<User>builder()
         .clazz(User.class)
@@ -58,7 +58,7 @@ public class DocReaderTest {
     InputStream inputStream = DocReaderTest.class
         .getClassLoader().getResourceAsStream("testReadWithAnnotation.xlsx");
 
-    try (DocReader reader = EasyExcel.read(inputStream, DocType.XLSX)){
+    try (DocReader reader = EasyDoc.read(DocType.XLSX, inputStream)){
       List<UserWithAnnotation> result = reader.resolve(ReadContextBuilder.<UserWithAnnotation>builder()
           .clazz(UserWithAnnotation.class)
           .buildForExcel())
@@ -77,7 +77,7 @@ public class DocReaderTest {
   public void testReadIdsCount() throws Exception {
     InputStream inputStream = DocReaderTest.class
         .getClassLoader().getResourceAsStream("testReadIdsCount.xlsx");
-    try (DocReader reader = EasyExcel.read(inputStream, DocType.XLSX)){
+    try (DocReader reader = EasyDoc.read(DocType.XLSX, inputStream)){
       List<Id> result = reader.resolve(ReadContextBuilder.<Id>builder()
           .clazz(Id.class)
           .buildForExcel())

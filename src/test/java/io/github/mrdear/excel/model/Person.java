@@ -1,10 +1,10 @@
 package io.github.mrdear.excel.model;
 
-import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.domain.convert.YmdDateConverter;
-import io.github.mrdear.excel.domain.convert.LocalDateConverter;
-import io.github.mrdear.excel.domain.convert.LocalDateTimeConverter;
-import io.github.mrdear.excel.domain.convert.LocalTimeConverter;
+import io.github.mrdear.excel.annotation.DocField;
+import io.github.mrdear.excel.convert.YmdDateConverter;
+import io.github.mrdear.excel.convert.LocalDateConverter;
+import io.github.mrdear.excel.convert.LocalDateTimeConverter;
+import io.github.mrdear.excel.convert.LocalTimeConverter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDate;
@@ -16,15 +16,15 @@ import java.util.Date;
  * @author rxliuli
  */
 public class Person {
-  @ExcelField(columnName = "姓名")
+  @DocField(columnName = "姓名")
   private String username;
-  @ExcelField(columnName = "生日", convert = LocalDateTimeConverter.class)
+  @DocField(columnName = "生日", convert = LocalDateTimeConverter.class)
   private LocalDateTime birthday;
-  @ExcelField(columnName = "日期", convert = YmdDateConverter.class)
+  @DocField(columnName = "日期", convert = YmdDateConverter.class)
   private Date date;
-  @ExcelField(columnName = "本地日期", convert = LocalDateConverter.class)
+  @DocField(columnName = "本地日期", convert = LocalDateConverter.class)
   private LocalDate localDate;
-  @ExcelField(columnName = "本地时间", convert = LocalTimeConverter.class)
+  @DocField(columnName = "本地时间", convert = LocalTimeConverter.class)
   private LocalTime localTime;
 
   public Person() {

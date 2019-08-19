@@ -1,6 +1,6 @@
 package io.github.mrdear.excel.read;
 
-import io.github.mrdear.excel.domain.ImportDomain;
+import java.io.IOException;
 
 /**
  * 文档读取入口
@@ -16,13 +16,13 @@ public interface DocReader extends AutoCloseable {
    * @param <T>     要解析出来的类型
    * @return 结果，包含正确数据与错误数据（格式/非业务相关）
    */
-  <T> ImportDomain<T> resolve(ReadContext<T> context);
+  <T> ReaderResolveResult<T> resolve(ReadContext<T> context);
 
   /**
    * 读取完释放资源
    */
   @Override
-  default void close() throws Exception {
+  default void close() throws IOException {
 
   }
 

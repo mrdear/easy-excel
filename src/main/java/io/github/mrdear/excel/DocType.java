@@ -3,6 +3,8 @@ package io.github.mrdear.excel;
 import io.github.mrdear.excel.internal.restrain.DocOperate;
 import io.github.mrdear.excel.read.DocReader;
 import io.github.mrdear.excel.read.ExcelDocReader;
+import io.github.mrdear.excel.write.DocWriter;
+import io.github.mrdear.excel.write.ExcelDocWriter;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -10,6 +12,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * 标识文档类型
@@ -31,6 +34,11 @@ public enum DocType implements DocOperate {
         public DocReader createReader(InputStream in) {
             return new ExcelDocReader(in);
         }
+
+        @Override
+        public DocWriter createWriter(OutputStream stream) {
+            return new ExcelDocWriter(this, stream);
+        }
     },
     /**
      * xlsx
@@ -45,6 +53,11 @@ public enum DocType implements DocOperate {
         @Override
         public DocReader createReader(InputStream in) {
             return new ExcelDocReader(in);
+        }
+
+        @Override
+        public DocWriter createWriter(OutputStream stream) {
+            return new ExcelDocWriter(this, stream);
         }
     },
     ;

@@ -1,5 +1,7 @@
 package io.github.mrdear.excel.read;
 
+import io.github.mrdear.excel.annotation.DocField;
+import io.github.mrdear.excel.domain.ReadHeader;
 import io.github.mrdear.excel.internal.util.Assert;
 import io.github.mrdear.excel.internal.util.DocBeanUtils;
 
@@ -47,7 +49,7 @@ public class ReadContextBuilder<T> {
   }
 
   /**
-   * 使用该方法默认会使用{@link io.github.mrdear.excel.annotation.ExcelField} 注解进行转换Header
+   * 使用该方法默认会使用{@link DocField} 注解进行转换Header
    *
    * @param clazz 目标类
    * @return header构造器

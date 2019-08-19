@@ -1,13 +1,13 @@
 package io.github.mrdear.excel.internal.util;
 
-import io.github.mrdear.excel.ExcelException;
-import io.github.mrdear.excel.annotation.ExcelField;
-import io.github.mrdear.excel.annotation.ExcelIgnore;
-import io.github.mrdear.excel.read.ReadHeader;
-import io.github.mrdear.excel.write.WriterHeader;
-import io.github.mrdear.excel.domain.convert.ConverterFactory;
-import io.github.mrdear.excel.domain.convert.IConverter;
-import io.github.mrdear.excel.domain.convert.NotSpecifyConverter;
+import io.github.mrdear.excel.exception.DocumentException;
+import io.github.mrdear.excel.annotation.DocField;
+import io.github.mrdear.excel.annotation.DocIgnore;
+import io.github.mrdear.excel.domain.ReadHeader;
+import io.github.mrdear.excel.domain.WriterHeader;
+import io.github.mrdear.excel.convert.ConverterFactory;
+import io.github.mrdear.excel.convert.IConverter;
+import io.github.mrdear.excel.convert.NotSpecifyConverter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -67,14 +67,14 @@ public class DocBeanUtils {
         Class clazz = bean instanceof Class ? (Class) bean : bean.getClass();
 
         // 为bean情况 获取到所有字段
-        return SuperClassUtil.getAllDeclaredField(clazz).stream()
+        return ClassUtil.getAllDeclaredField(clazz).stream()
             // 过滤掉指定忽略的字段
-            .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
+            .filter(x -> Objects.isNull(x.getAnnotation(DocIgnore.class)))
             .sorted(Comparator.comparing(x -> {
-                if (null == x.getAnnotation(ExcelField.class)) {
+                if (null == x.getAnnotation(DocField.class)) {
                     return 0;
                 }
-                return x.getAnnotation(ExcelField.class).order();
+                return x.getAnnotation(DocField.class).order();
             }))
             .map(x -> {
                 final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
@@ -91,14 +91,14 @@ public class DocBeanUtils {
      * @return 读操作header, key columnName value ReadHeader
      */
     public static <T> Map<String, ReadHeader> beanToReaderHeaders(Class<T> clazz) {
-        return SuperClassUtil.getAllDeclaredField(clazz).stream()
+        return ClassUtil.getAllDeclaredField(clazz).stream()
             // 过滤掉指定忽略的字段
-            .filter(x -> Objects.isNull(x.getAnnotation(ExcelIgnore.class)))
+            .filter(x -> Objects.isNull(x.getAnnotation(DocIgnore.class)))
             .sorted(Comparator.comparing(x -> {
-                if (null == x.getAnnotation(ExcelField.class)) {
+                if (null == x.getAnnotation(DocField.class)) {
                     return 0;
                 }
-                return x.getAnnotation(ExcelField.class).order();
+                return x.getAnnotation(DocField.class).order();
             }))
             .map(x -> {
                 final Pair<String, ? extends IConverter> pair = castHeaderNameAndConverter(x);
@@ -115,14 +115,14 @@ public class DocBeanUtils {
      */
     private static Pair<String, ? extends IConverter> castHeaderNameAndConverter(Field field) {
         field.setAccessible(true);
-        ExcelField excelField = field.getAnnotation(ExcelField.class);
+        DocField docField = field.getAnnotation(DocField.class);
         // 不存在则返回字段名以及默认转换器
-        if (null == excelField) {
+        if (null == docField) {
             return new Pair<>(field.getName(), ConverterFactory.get(field.getType()));
         }
 
         // 如果 convertClass 未指定，则根据字段类型获取对应的默认转换器
-        Class<? extends IConverter> convertClass = excelField.convert();
+        Class<? extends IConverter> convertClass = docField.convert();
         IConverter<?> convert = null;
         if (NotSpecifyConverter.class.equals(convertClass)) {
             convert = ConverterFactory.get(field.getType());
@@ -130,7 +130,7 @@ public class DocBeanUtils {
             convert = ConverterFactory.get(convertClass);
         }
 
-        String columnName = excelField.columnName();
+        String columnName = docField.columnName();
         String name = StringUtils.isEmpty(columnName) ? field.getName() : columnName;
         return new Pair<>(name, convert);
     }
@@ -159,7 +159,7 @@ public class DocBeanUtils {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new ExcelException(e);
+            throw new DocumentException(e);
         }
     }
 
@@ -173,7 +173,7 @@ public class DocBeanUtils {
             field.setAccessible(true);
             field.set(target, value);
         } catch (IllegalAccessException e) {
-            throw new ExcelException(e);
+            throw new DocumentException(e);
         }
     }
 

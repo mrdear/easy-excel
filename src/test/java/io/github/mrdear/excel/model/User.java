@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import io.github.mrdear.excel.annotation.ExcelField;
+import io.github.mrdear.excel.annotation.DocField;
 
 /**
  * @author Quding Ding
@@ -17,7 +17,7 @@ public class User {
 
   private String username;
 
-  @ExcelField
+  @DocField
   private String passwd;
 
 
