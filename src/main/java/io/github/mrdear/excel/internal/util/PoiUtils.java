@@ -22,6 +22,8 @@ public class PoiUtils {
                 return String.valueOf(cell.getNumericCellValue());
             case BLANK:
                 return "";
+            case FORMULA:
+                return cell.getCellFormula();
             default:
                 return cell.getStringCellValue();
         }

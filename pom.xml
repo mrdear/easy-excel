@@ -6,7 +6,7 @@
 
     <groupId>io.github.mrdear</groupId>
     <artifactId>excel</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.1</version>
     <name>easy-excel</name>
     <url>https://github.com/mrdear/easy-excel</url>
     <description>一款方便操作excel的封装</description>
@@ -32,6 +32,9 @@
 
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <poi.version>3.17</poi.version>
         <commons-lang3.version>3.6</commons-lang3.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
@@ -193,7 +196,7 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
