@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <poi.version>3.17</poi.version>
+        <poi.version>4.1.1</poi.version>
         <commons-lang3.version>3.6</commons-lang3.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
     </properties>
